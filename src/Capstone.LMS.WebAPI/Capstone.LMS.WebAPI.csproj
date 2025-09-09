@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>8e107453-f2ac-4aed-93a6-ad2aa11dd072</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.4" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Capstone.LMS.Application\Capstone.LMS.Application.csproj" />
+    <ProjectReference Include="..\Capstone.LMS.Infrastructure\Capstone.LMS.Infrastructure.csproj" />
+    <ProjectReference Include="..\Capstone.LMS.Persistence\Capstone.LMS.Persistence.csproj" />
+    <ProjectReference Include="..\Capstone.LMS.Presentation\Capstone.LMS.Presentation.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Capstone.LMS.Application\Capstone.LMS.Application.csproj" />
+    <ProjectReference Include="..\Capstone.LMS.Domain\Capstone.LMS.Domain.csproj" />
+  </ItemGroup>
+
+</Project>
