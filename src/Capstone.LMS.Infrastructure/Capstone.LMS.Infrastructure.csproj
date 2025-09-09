@@ -7,6 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.9" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="9.0.9" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Capstone.LMS.Application\Capstone.LMS.Application.csproj" />
     <ProjectReference Include="..\Capstone.LMS.Domain\Capstone.LMS.Domain.csproj" />
   </ItemGroup>
