@@ -12,10 +12,10 @@ namespace Capstone.LMS.Persistence.Configurations
 
             builder.Property(p => p.CreatedBy).IsRequired();
             builder.Property(p => p.ModifiedBy).IsRequired();
-            builder.Property(p => p.CreatedAtUtc).IsRequired();
-            builder.Property(p => p.ModifiedAtUtc).IsRequired();
+            builder.Property(p => p.CreatedOnUtc).IsRequired();
+            builder.Property(p => p.ModifiedOnUtc).IsRequired();
 
-            builder.HasQueryFilter(p => p.DeletedAtUtc == null);
+            builder.HasQueryFilter(p => p.DeletedOnUtc == null);
         }
     }
 }

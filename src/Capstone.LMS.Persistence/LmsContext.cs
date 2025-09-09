@@ -40,5 +40,18 @@ namespace Capstone.LMS.Persistence
 
             #endregion
         }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            base.OnConfiguring(optionsBuilder);
+
+            optionsBuilder.UseSeeding((ctx, _) =>
+            {
+                
+            }).UseAsyncSeeding(async (ctx, _, cancellationToken) =>
+            {
+
+            });
+        }
     }
 }

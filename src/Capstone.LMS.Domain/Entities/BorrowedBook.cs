@@ -1,42 +1,109 @@
-﻿using Capstone.LMS.Domain.Enums;
+﻿using Capstone.LMS.Domain.Constants;
+using Capstone.LMS.Domain.Enums;
 using Capstone.LMS.Domain.Primitives;
 using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Capstone.LMS.Domain.Entities
 {
     public sealed class BorrowedBook : Entity
     {
-        public BorrowedBook()
-            : base(Guid.NewGuid())
+        private BorrowedBook() 
+        { 
+        }
+
+        private BorrowedBook(
+            Guid id,
+            Book book,
+            User user,
+            DateTime? issuedOnUtc,
+            DateTime? dueOnUtc,
+            DateTime? returnedOnUtc,
+            BorrowedStatus status,
+            string bookCondition)
+            : base(id)
         {
-            
+            BorrowedOnUtc = issuedOnUtc;
+            DueOnUtc = dueOnUtc;
+            ReturnedOnUtc = returnedOnUtc;
+            Status = status;
+            BookCondition = bookCondition;
+
+            AddBook(book);
+            AddUser(user);
         }
 
         public Guid BookId { get; private set; }
         public Guid UserId { get; private set; }
-        public DateTime IssuedAtUtc { get; private set; }
-        public DateTime DueAtUtc { get; private set; }
-        public DateTime? ReturnedAtUtc { get; private set; }
+        public DateTime? BorrowedOnUtc { get; private set; }
+        public DateTime? DueOnUtc { get; private set; }
+        public DateTime? ReturnedOnUtc { get; private set; }
         public BorrowedStatus Status { get; private set; }
+        public string BookCondition { get; private set; }
+
+        [NotMapped]
+        public bool IsOverdue => DateTime.UtcNow > DueOnUtc;
 
         public Book Book { get; private set; }
         public User User { get; private set; }
 
-        public void Issued()
+        public void Borrowed()
         {
+            BorrowedOnUtc = DateTime.UtcNow;
+            DueOnUtc = DateTime.UtcNow.AddDays(LibraryPolicy.Borrowing.LoanPeriodDays);
             Status = BorrowedStatus.Borrowed;
-            IssuedAtUtc = DateTime.UtcNow;
         }
 
         public void Returned()
         {
+            ReturnedOnUtc = DateTime.UtcNow;
             Status = BorrowedStatus.Returned;
-            ReturnedAtUtc = DateTime.UtcNow;
         }
 
         public void Overdue()
         {
             Status = BorrowedStatus.Overdue;
+        }
+
+        public void AddBook(Book book)
+        {
+            BookId = book.Id;
+        }
+
+        public void AddUser(User user)
+        {
+            UserId = user.Id;
+        }
+
+        public void SetBookCondition(string condition)
+        {
+            BookCondition = condition;
+        }
+
+
+        public static BorrowedBook Create(
+            Guid id,
+            Book book,
+            User user,
+            DateTime? issuedOnUtc,
+            DateTime? dueOnUtc,
+            DateTime? returnedOnUtc,
+            BorrowedStatus status,
+            string bookCondition)
+        {
+            var borrowedBook = new BorrowedBook(
+                id,
+                book,
+                user,
+                issuedOnUtc,
+                dueOnUtc,
+                returnedOnUtc,
+                status,
+                bookCondition);
+
+            borrowedBook.Created(user.Id);
+
+            return borrowedBook;
         }
 
     }

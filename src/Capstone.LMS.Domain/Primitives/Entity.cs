@@ -4,34 +4,43 @@ namespace Capstone.LMS.Domain.Primitives
 {
     public abstract class Entity : IEquatable<Entity>, IAudit
     {
+        protected Entity() 
+        { 
+
+        }
+
         protected Entity(Guid id) 
         {
             Id = id;
         }
 
-        public Guid Id { get; }
+        public Guid Id { get; protected set; }
 
         public Guid CreatedBy { get; private set; }
         public Guid ModifiedBy { get; private set; }
         public Guid? DeletedBy { get; private set; }
-        public DateTime CreatedAtUtc { get; private set; }
-        public DateTime ModifiedAtUtc { get; private set; }
-        public DateTime? DeletedAtUtc { get; private set; }
+        public DateTime CreatedOnUtc { get; private set; }
+        public DateTime ModifiedOnUtc { get; private set; }
+        public DateTime? DeletedOnUtc { get; private set; }
 
-        public void Created()
+        public void Created(Guid createdBy)
         {
-            CreatedAtUtc = DateTime.UtcNow;
-            ModifiedAtUtc = DateTime.UtcNow;
+            CreatedBy = createdBy;
+            ModifiedBy = createdBy;
+            CreatedOnUtc = DateTime.UtcNow;
+            ModifiedOnUtc = DateTime.UtcNow;
         }
 
-        public void Modified()
+        public void Modified(Guid modifiedBy)
         {
-            ModifiedAtUtc = DateTime.UtcNow;
+            ModifiedBy = modifiedBy;
+            ModifiedOnUtc = DateTime.UtcNow;
         }
 
-        public void Deleted()
+        public void Deleted(Guid deletedBy)
         {
-            DeletedAtUtc = DateTime.UtcNow;
+            DeletedBy = deletedBy;
+            DeletedOnUtc = DateTime.UtcNow;
         }
 
         public static bool operator ==(Entity first, Entity second)

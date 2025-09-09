@@ -4,6 +4,7 @@ using Capstone.LMS.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Capstone.LMS.Persistence.Migrations
 {
     [DbContext(typeof(LmsContext))]
-    partial class LmsContextModelSnapshot : ModelSnapshot
+    [Migration("20250909193029_AlterUserAndBorrowedBookTables")]
+    partial class AlterUserAndBorrowedBookTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -28,23 +31,23 @@ namespace Capstone.LMS.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
                     b.Property<Guid>("CreatedBy")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("CreatedOnUtc")
+                    b.Property<DateTime?>("DeletedAtUtc")
                         .HasColumnType("datetime2");
 
                     b.Property<Guid?>("DeletedBy")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("DeletedOnUtc")
+                    b.Property<DateTime>("ModifiedAtUtc")
                         .HasColumnType("datetime2");
 
                     b.Property<Guid>("ModifiedBy")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("ModifiedOnUtc")
-                        .HasColumnType("datetime2");
 
                     b.Property<Guid>("PermissionId")
                         .HasColumnType("uniqueidentifier");
@@ -72,23 +75,23 @@ namespace Capstone.LMS.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
                     b.Property<Guid>("CreatedBy")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("CreatedOnUtc")
+                    b.Property<DateTime?>("DeletedAtUtc")
                         .HasColumnType("datetime2");
 
                     b.Property<Guid?>("DeletedBy")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("DeletedOnUtc")
+                    b.Property<DateTime>("ModifiedAtUtc")
                         .HasColumnType("datetime2");
 
                     b.Property<Guid>("ModifiedBy")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("ModifiedOnUtc")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -112,17 +115,17 @@ namespace Capstone.LMS.Persistence.Migrations
                     b.Property<Guid>("AuthorId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
                     b.Property<Guid>("CreatedBy")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("CreatedOnUtc")
+                    b.Property<DateTime?>("DeletedAtUtc")
                         .HasColumnType("datetime2");
 
                     b.Property<Guid?>("DeletedBy")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("DeletedOnUtc")
-                        .HasColumnType("datetime2");
 
                     b.Property<Guid>("GenreId")
                         .HasColumnType("uniqueidentifier");
@@ -130,11 +133,11 @@ namespace Capstone.LMS.Persistence.Migrations
                     b.Property<string>("Isbn")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("ModifiedAtUtc")
+                        .HasColumnType("datetime2");
+
                     b.Property<Guid>("ModifiedBy")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("ModifiedOnUtc")
-                        .HasColumnType("datetime2");
 
                     b.Property<DateTime>("PublishedOn")
                         .HasColumnType("datetime2");
@@ -177,31 +180,31 @@ namespace Capstone.LMS.Persistence.Migrations
                     b.Property<Guid>("BookId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("BorrowedOnUtc")
+                    b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("datetime2");
 
                     b.Property<Guid>("CreatedBy")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("CreatedOnUtc")
+                    b.Property<DateTime?>("DeletedAtUtc")
                         .HasColumnType("datetime2");
 
                     b.Property<Guid?>("DeletedBy")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("DeletedOnUtc")
+                    b.Property<DateTime?>("DueAtUtc")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("DueOnUtc")
+                    b.Property<DateTime?>("IssuedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ModifiedAtUtc")
                         .HasColumnType("datetime2");
 
                     b.Property<Guid>("ModifiedBy")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("ModifiedOnUtc")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("ReturnedOnUtc")
+                    b.Property<DateTime?>("ReturnedAtUtc")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("Status")
@@ -227,23 +230,23 @@ namespace Capstone.LMS.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
                     b.Property<Guid>("CreatedBy")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("CreatedOnUtc")
+                    b.Property<DateTime?>("DeletedAtUtc")
                         .HasColumnType("datetime2");
 
                     b.Property<Guid?>("DeletedBy")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("DeletedOnUtc")
+                    b.Property<DateTime>("ModifiedAtUtc")
                         .HasColumnType("datetime2");
 
                     b.Property<Guid>("ModifiedBy")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("ModifiedOnUtc")
-                        .HasColumnType("datetime2");
 
                     b.Property<Guid>("PermissionId")
                         .HasColumnType("uniqueidentifier");
@@ -266,23 +269,23 @@ namespace Capstone.LMS.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
                     b.Property<Guid>("CreatedBy")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("CreatedOnUtc")
+                    b.Property<DateTime?>("DeletedAtUtc")
                         .HasColumnType("datetime2");
 
                     b.Property<Guid?>("DeletedBy")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("DeletedOnUtc")
+                    b.Property<DateTime>("ModifiedAtUtc")
                         .HasColumnType("datetime2");
 
                     b.Property<Guid>("ModifiedBy")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("ModifiedOnUtc")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -306,26 +309,26 @@ namespace Capstone.LMS.Persistence.Migrations
                     b.Property<int>("BitwiseValue")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
                     b.Property<Guid>("CreatedBy")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("CreatedOnUtc")
+                    b.Property<DateTime?>("DeletedAtUtc")
                         .HasColumnType("datetime2");
 
                     b.Property<Guid?>("DeletedBy")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("DeletedOnUtc")
-                        .HasColumnType("datetime2");
-
                     b.Property<bool>("Enabled")
                         .HasColumnType("bit");
 
+                    b.Property<DateTime>("ModifiedAtUtc")
+                        .HasColumnType("datetime2");
+
                     b.Property<Guid>("ModifiedBy")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("ModifiedOnUtc")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("PermissionName")
                         .IsRequired()
@@ -350,23 +353,23 @@ namespace Capstone.LMS.Persistence.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
                     b.Property<Guid>("CreatedBy")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("CreatedOnUtc")
+                    b.Property<DateTime?>("DeletedAtUtc")
                         .HasColumnType("datetime2");
 
                     b.Property<Guid?>("DeletedBy")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("DeletedOnUtc")
+                    b.Property<DateTime>("ModifiedAtUtc")
                         .HasColumnType("datetime2");
 
                     b.Property<Guid>("ModifiedBy")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("ModifiedOnUtc")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .HasMaxLength(256)
@@ -395,26 +398,26 @@ namespace Capstone.LMS.Persistence.Migrations
                     b.Property<int>("BitwiseValue")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
                     b.Property<Guid>("CreatedBy")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("CreatedOnUtc")
+                    b.Property<DateTime?>("DeletedAtUtc")
                         .HasColumnType("datetime2");
 
                     b.Property<Guid?>("DeletedBy")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("DeletedOnUtc")
-                        .HasColumnType("datetime2");
-
                     b.Property<bool>("Enabled")
                         .HasColumnType("bit");
 
+                    b.Property<DateTime>("ModifiedAtUtc")
+                        .HasColumnType("datetime2");
+
                     b.Property<Guid>("ModifiedBy")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("ModifiedOnUtc")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("SubPermissionName")
                         .IsRequired()
@@ -438,7 +441,7 @@ namespace Capstone.LMS.Persistence.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("ActivatedOnUtc")
+                    b.Property<DateTime?>("ActivatedAtUtc")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("ActiveStatus")
@@ -451,17 +454,17 @@ namespace Capstone.LMS.Persistence.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
                     b.Property<Guid>("CreatedBy")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("CreatedOnUtc")
+                    b.Property<DateTime?>("DeletedAtUtc")
                         .HasColumnType("datetime2");
 
                     b.Property<Guid?>("DeletedBy")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("DeletedOnUtc")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
@@ -491,11 +494,11 @@ namespace Capstone.LMS.Persistence.Migrations
                     b.Property<DateTimeOffset?>("LockoutEnd")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<DateTime>("ModifiedAtUtc")
+                        .HasColumnType("datetime2");
+
                     b.Property<Guid>("ModifiedBy")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("ModifiedOnUtc")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
@@ -517,11 +520,11 @@ namespace Capstone.LMS.Persistence.Migrations
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("SuspendReason")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("SuspendedOnUtc")
+                    b.Property<DateTime?>("SuspendedAtUtc")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("SuspendedReason")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
@@ -693,13 +696,13 @@ namespace Capstone.LMS.Persistence.Migrations
             modelBuilder.Entity("Capstone.LMS.Domain.Entities.BorrowedBook", b =>
                 {
                     b.HasOne("Capstone.LMS.Domain.Entities.Book", "Book")
-                        .WithMany("BorrowedBooks")
+                        .WithMany("Issues")
                         .HasForeignKey("BookId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Capstone.LMS.Domain.Entities.User", "User")
-                        .WithMany("BorrowedBooks")
+                        .WithMany("Issues")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -786,7 +789,7 @@ namespace Capstone.LMS.Persistence.Migrations
 
             modelBuilder.Entity("Capstone.LMS.Domain.Entities.Book", b =>
                 {
-                    b.Navigation("BorrowedBooks");
+                    b.Navigation("Issues");
                 });
 
             modelBuilder.Entity("Capstone.LMS.Domain.Entities.Genre", b =>
@@ -815,7 +818,7 @@ namespace Capstone.LMS.Persistence.Migrations
 
             modelBuilder.Entity("Capstone.LMS.Domain.Entities.User", b =>
                 {
-                    b.Navigation("BorrowedBooks");
+                    b.Navigation("Issues");
                 });
 #pragma warning restore 612, 618
         }

@@ -14,8 +14,6 @@ namespace Capstone.LMS.Persistence.Configurations
 
             builder.Property(p => p.BookId).IsRequired();
             builder.Property(p => p.UserId).IsRequired();
-            builder.Property(p => p.IssuedAtUtc).IsRequired();
-            builder.Property(p => p.DueAtUtc).IsRequired();
             builder.Property(p => p.Status).IsRequired();
 
             builder.HasIndex(p => p.BookId);
@@ -23,11 +21,11 @@ namespace Capstone.LMS.Persistence.Configurations
             builder.HasIndex(p => p.Status);
 
             builder.HasOne(p => p.Book)
-                .WithMany(p => p.Issues)
+                .WithMany(p => p.BorrowedBooks)
                 .HasForeignKey(p => p.BookId);
 
             builder.HasOne(p => p.User)
-                .WithMany(p => p.Issues)
+                .WithMany(p => p.BorrowedBooks)
                 .HasForeignKey(p => p.UserId);
 
             builder.ToTable(EntityTables.BorrowedBooks);

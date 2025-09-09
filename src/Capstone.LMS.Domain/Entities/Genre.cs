@@ -6,14 +6,32 @@ namespace Capstone.LMS.Domain.Entities
 {
     public sealed class Genre : Entity
     {
-        public Genre()
-            : base(Guid.NewGuid())
+        private List<Book> _books = [];
+
+        private Genre()
         {
-            
+
+        }
+
+        private Genre(
+            Guid id,
+            string name)
+            : base(id)
+        {
+            Name = name;
         }
 
         public string Name { get; private set; }
 
-        public IReadOnlyList<Book> Books { get; private set; }
+        public IReadOnlyList<Book> Books => [.. _books];
+
+        public static Genre Create(
+            Guid id,
+            string name)
+        {
+            return new(
+                id,
+                name);
+        }
     }
 }
