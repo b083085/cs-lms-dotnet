@@ -1,5 +1,6 @@
 ﻿using Capstone.LMS.Domain.Constants;
 using Capstone.LMS.Domain.Entities;
+using Capstone.LMS.Persistence.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -47,10 +48,16 @@ namespace Capstone.LMS.Persistence
 
             optionsBuilder.UseSeeding((ctx, _) =>
             {
-                
+                ctx
+                .EnsureRole(Domain.Constants.Roles.AdministratorId, Domain.Constants.Roles.Administrator)
+                .EnsureRole(Domain.Constants.Roles.LibrarianId, Domain.Constants.Roles.Librarian)
+                .EnsureRole(Domain.Constants.Roles.BorrowerId, Domain.Constants.Roles.Borrower);
+
             }).UseAsyncSeeding(async (ctx, _, cancellationToken) =>
             {
-
+                await ctx.EnsureRoleAsync(Domain.Constants.Roles.AdministratorId, Domain.Constants.Roles.Administrator);
+                await ctx.EnsureRoleAsync(Domain.Constants.Roles.LibrarianId, Domain.Constants.Roles.Librarian);
+                await ctx.EnsureRoleAsync(Domain.Constants.Roles.BorrowerId, Domain.Constants.Roles.Borrower);    
             });
         }
     }
