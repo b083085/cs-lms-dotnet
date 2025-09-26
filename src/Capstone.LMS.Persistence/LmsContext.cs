@@ -1,4 +1,5 @@
-﻿using Capstone.LMS.Domain.Constants;
+﻿using Capstone.LMS.Application.Persistence;
+using Capstone.LMS.Domain.Constants;
 using Capstone.LMS.Domain.Entities;
 using Capstone.LMS.Persistence.Extensions;
 using Microsoft.AspNetCore.Identity;
@@ -8,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Capstone.LMS.Persistence
 {
     public sealed class LmsContext(DbContextOptions<LmsContext> options)
-        : IdentityDbContext<User, Role, Guid>(options)
+        : IdentityDbContext<User, Role, Guid>(options), ILMSContext
     {
         public DbSet<AccessControl> AccessControls { get; set; }
         public DbSet<Book> Books { get; set; }

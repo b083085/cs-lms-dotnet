@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace Capstone.LMS.Domain.Entities
 {
-    public sealed class Book : Entity
+    public sealed class Book : AggregateRoot
     {
         private List<BorrowedBook> _borrowedBooks = [];
 

@@ -2,7 +2,6 @@
 using Capstone.LMS.Application.Mapper;
 using FluentValidation;
 using Mapster;
-using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -14,9 +13,14 @@ namespace Capstone.LMS.Application
         {
             var assembly = typeof(DependencyInjection).Assembly;
 
-            services.AddMediatR(p => p.RegisterServicesFromAssembly(assembly));
+            services.AddMediatR(config =>
+            {
+                config.RegisterServicesFromAssembly(assembly);
+                config.AddOpenBehavior(typeof(UnitOfWorkBehavior<,>));
+                config.AddOpenBehavior(typeof(ValidationBehavior<,>));
+            });
             services.AddValidatorsFromAssembly(assembly);
-            services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+            //services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
             var mapperConfig = TypeAdapterConfig.GlobalSettings.ConfigureMappings();
 

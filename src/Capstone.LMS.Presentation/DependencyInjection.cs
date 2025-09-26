@@ -1,7 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-
-namespace Capstone.LMS.Presentation
+﻿namespace Capstone.LMS.Presentation
 {
     public static class DependencyInjection
     {

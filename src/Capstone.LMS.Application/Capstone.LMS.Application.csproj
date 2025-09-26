@@ -16,4 +16,9 @@
     <ProjectReference Include="..\Capstone.LMS.Domain\Capstone.LMS.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Commands\" />
+    <Folder Include="Queries\" />
+  </ItemGroup>
+
 </Project>

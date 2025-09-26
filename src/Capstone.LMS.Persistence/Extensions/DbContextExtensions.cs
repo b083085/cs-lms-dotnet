@@ -10,12 +10,7 @@ namespace Capstone.LMS.Persistence.Extensions
             var role = dbContext.Set<Role>().FirstOrDefault(p => p.Name == roleName);
             if (role == null)
             {
-                dbContext.Set<Role>().Add(new()
-                {
-                    Id = roleId,
-                    Name = roleName,
-                    NormalizedName = roleName.ToUpper()
-                });
+                dbContext.Set<Role>().Add(CreateRole(roleId, roleName));
                 dbContext.SaveChanges();
             }
 
@@ -27,16 +22,22 @@ namespace Capstone.LMS.Persistence.Extensions
             var role = await dbContext.Set<Role>().FirstOrDefaultAsync(p => p.Name == roleName);
             if (role == null)
             {
-                await dbContext.Set<Role>().AddAsync(new()
-                {
-                    Id = roleId,
-                    Name = roleName,
-                    NormalizedName = roleName.ToUpper()
-                });
+                await dbContext.Set<Role>().AddAsync(CreateRole(roleId, roleName));
                 await dbContext.SaveChangesAsync();
             }
 
             return dbContext;
+        }
+
+        private static Role CreateRole(Guid roleId, string roleName)
+        {
+            return new()
+            {
+                Id = roleId,
+                Name = roleName,
+                NormalizedName = roleName.ToUpper(),
+                ConcurrencyStamp = Guid.NewGuid().ToString()
+            };
         }
     }
 }

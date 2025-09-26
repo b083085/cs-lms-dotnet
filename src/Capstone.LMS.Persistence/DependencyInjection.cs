@@ -1,4 +1,5 @@
-﻿using Capstone.LMS.Domain.Entities;
+﻿using Capstone.LMS.Application.Persistence;
+using Capstone.LMS.Domain.Entities;
 using Capstone.LMS.Domain.Repositories;
 using Capstone.LMS.Persistence.Options;
 using Capstone.LMS.Persistence.Repositories;
@@ -65,6 +66,9 @@ namespace Capstone.LMS.Persistence
             })
                 .AddEntityFrameworkStores<LmsContext>()
                 .AddDefaultTokenProviders();
+
+            services.AddScoped<ILMSContext>(sp => sp.GetRequiredService<LmsContext>());
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
         }
     }
 }

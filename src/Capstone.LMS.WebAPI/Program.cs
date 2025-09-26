@@ -2,16 +2,20 @@ using Capstone.LMS.Application;
 using Capstone.LMS.Infrastructure;
 using Capstone.LMS.Persistence;
 using Capstone.LMS.Presentation;
+using Carter;
 
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
 var config = builder.Configuration;
 
-services.AddOpenApi();
-services.AddApplication(config);
-services.AddInfrastructure(config);
-services.AddPersistence(config);
-services.AddPresentation(config);
+services
+    .AddOpenApi()
+    .AddApplication(config)
+    .AddInfrastructure(config)
+    .AddPersistence(config)
+    .AddPresentation(config)
+    .AddCarter();
+
 
 var app = builder.Build();
 
@@ -20,6 +24,8 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
+
+app.MapCarter();
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
