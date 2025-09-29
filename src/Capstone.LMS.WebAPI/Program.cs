@@ -3,10 +3,12 @@ using Capstone.LMS.Infrastructure;
 using Capstone.LMS.Persistence;
 using Capstone.LMS.Presentation;
 using Carter;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
 var config = builder.Configuration;
+var host = builder.Host;
 
 services
     .AddOpenApi()
@@ -16,6 +18,8 @@ services
     .AddPresentation(config)
     .AddCarter();
 
+host.UseSerilog((ctx, config) => 
+config.ReadFrom.Configuration(ctx.Configuration));
 
 var app = builder.Build();
 
@@ -23,15 +27,30 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+
+    app.UseSwagger();
+    app.UseSwaggerUI(options =>
+    {
+        var descriptions = app.DescribeApiVersions();
+        foreach (var description in descriptions)
+        {
+            var url = $"/swagger/{description.GroupName}/swagger.json";
+            var name = description.GroupName.ToUpperInvariant();
+
+            options.SwaggerEndpoint(url, name);
+        }      
+    });
 }
 
-app.MapCarter();
+app.UseSerilogRequestLogging();
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 //app.UseCors();
 //app.UseAuthentication();
 //app.UseAuthorization();
+
+app.MapCarter();
 
 app.Run();
 

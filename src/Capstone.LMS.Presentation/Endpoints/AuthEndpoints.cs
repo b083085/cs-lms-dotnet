@@ -2,11 +2,11 @@
 
 namespace Capstone.LMS.Presentation.Endpoints
 {
-    public class AuthEndpoints : ICarterModule
+    public class AuthEndpoints : BaseEndpoints, ICarterModule
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            var group = app.MapGroup("/auth");
+            var group = CreateMapGroup(app, "auth");
 
             group.MapPost("/signup", SignUp)
                  .WithName("SignUp")
@@ -21,7 +21,7 @@ namespace Capstone.LMS.Presentation.Endpoints
                  .WithSummary("Sign out the current user");
         }
 
-        private static async Task<IResult> SignUp(HttpContext context)
+        private static async Task<IResult> SignUp(HttpContext context, CancellationToken cancellationToken)
         {
             // Example body parsing
             var user = await context.Request.ReadFromJsonAsync<UserDto>();
@@ -29,14 +29,14 @@ namespace Capstone.LMS.Presentation.Endpoints
             return Results.Created("/auth/signup", user);
         }
 
-        private static async Task<IResult> Login(HttpContext context)
+        private static async Task<IResult> Login(HttpContext context, CancellationToken cancellationToken)
         {
             var login = await context.Request.ReadFromJsonAsync<LoginDto>();
             // TODO: authentication logic
             return Results.Ok(new { Token = "fake-jwt-token" });
         }
 
-        private static Task<IResult> Logout(HttpContext context)
+        private static Task<IResult> Logout(HttpContext context, CancellationToken cancellationToken)
         {
             // TODO: clear token/session logic
             return Task.FromResult(Results.Ok(new { Message = "Logged out" }));
