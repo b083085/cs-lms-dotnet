@@ -13,6 +13,18 @@ namespace Capstone.LMS.Domain.Errors
             public static readonly Error FirstNameIsTooLong = new(
                 "FirstName.TooLong",
                 "First name is too long.");
+
+            public static readonly Error GenderIsEmpty = new(
+                "Gender.Empty",
+                "Gender is empty.");
+
+            public static readonly Error GenderIsTooLong = new(
+                "Gender.TooLong",
+                "Gender is too long.");
+
+            public static readonly Error GenderIsUnknown = new(
+                "Gender.Unknown",
+                "Gender is unknown.");
         }
     }
 }

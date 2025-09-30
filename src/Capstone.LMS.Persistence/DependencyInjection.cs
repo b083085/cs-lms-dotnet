@@ -1,6 +1,7 @@
 ﻿using Capstone.LMS.Application.Persistence;
 using Capstone.LMS.Domain.Entities;
 using Capstone.LMS.Domain.Repositories;
+using Capstone.LMS.Persistence.Interceptors;
 using Capstone.LMS.Persistence.Options;
 using Capstone.LMS.Persistence.Repositories;
 using Microsoft.AspNetCore.Identity;
@@ -39,7 +40,8 @@ namespace Capstone.LMS.Persistence
                             .Get<DatabaseOptions>();
 
             Action<DbContextOptionsBuilder> dbContextOptions = options => options
-                .UseSqlServer(dbOptions.ConnectionString, opt => opt.CommandTimeout(dbOptions.CommandTimeout));
+                .UseSqlServer(dbOptions.ConnectionString, opt => opt.CommandTimeout(dbOptions.CommandTimeout))
+                .AddInterceptors(new PublicIdSaveChangesInterceptor());
 
             services.AddDbContext<LmsContext>(dbContextOptions, ServiceLifetime.Scoped);
             services.AddDbContextFactory<LmsContext>(dbContextOptions, ServiceLifetime.Scoped);

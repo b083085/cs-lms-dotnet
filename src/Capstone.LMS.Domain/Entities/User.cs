@@ -21,6 +21,7 @@ namespace Capstone.LMS.Domain.Entities
             Id = id;
         }
 
+        public Guid PublicId { get; private set; }  
         public string FirstName { get; private set; }
         public string LastName { get; private set; }
         public string Gender { get; private set; }
@@ -60,5 +61,8 @@ namespace Capstone.LMS.Domain.Entities
                 !_borrowedBooks.Any(p => p.Status == BorrowedStatus.Overdue) &&
                 _borrowedBooks.Count(p => p.Status == BorrowedStatus.Borrowed) <= BorrowingLimit;
         }
+
+        public void GeneratePublicId() =>
+            PublicId = Guid.NewGuid();
     }
 }

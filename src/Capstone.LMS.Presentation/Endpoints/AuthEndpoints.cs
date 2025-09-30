@@ -1,4 +1,10 @@
-﻿using Carter;
+﻿using Capstone.LMS.Application.Commands.Auth;
+using Capstone.LMS.Application.Dtos;
+using Capstone.LMS.Application.Dtos.Auth;
+using Capstone.LMS.Domain.Shared;
+using Carter;
+using MediatR;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Capstone.LMS.Presentation.Endpoints
 {
@@ -6,44 +12,72 @@ namespace Capstone.LMS.Presentation.Endpoints
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            var group = CreateMapGroup(app, "auth");
+            var group = CreateMapGroup(app, "auth")
+                .WithTags("Auth");
 
-            group.MapPost("/signup", SignUp)
-                 .WithName("SignUp")
-                 .WithSummary("Register a new user");
-
-            group.MapPost("/login", Login)
+            group.MapPost("login", LoginAsync)
                  .WithName("Login")
-                 .WithSummary("Authenticate user");
+                 .WithSummary("Authenticate user.");
 
-            group.MapPost("/logout", Logout)
+            group.MapPost("logout", LogoutAsync)
                  .WithName("Logout")
-                 .WithSummary("Sign out the current user");
+                 .WithSummary("Sign out the current user.");
+
+            group.MapPost("signup", SignUpAsync)
+                 .WithName("SignUp")
+                 .WithSummary("Register a new user.");
+
+            group.MapPost("verify", VerifyAccountAsync)
+                 .WithName("Verify")
+                 .WithSummary("Verifies the user account.");
         }
 
-        private static async Task<IResult> SignUp(HttpContext context, CancellationToken cancellationToken)
+        private static async Task<Results<Ok<LoginResponseDto>, BadRequest<Error>>> LoginAsync(
+            IMediator mediator,
+            LoginCommand command,
+            CancellationToken cancellationToken)
         {
-            // Example body parsing
-            var user = await context.Request.ReadFromJsonAsync<UserDto>();
-            // TODO: handle user registration logic
-            return Results.Created("/auth/signup", user);
+            var result = await mediator.Send(command, cancellationToken);
+            if (result.IsSuccess)
+            {
+                return TypedResults.Ok(result.Value);
+            }
+
+            return TypedResults.BadRequest(result.Error);
         }
 
-        private static async Task<IResult> Login(HttpContext context, CancellationToken cancellationToken)
+        private static async Task<Ok<SuccessResponseDto>> LogoutAsync(
+            IMediator mediator,
+            LogoutCommand command,
+            CancellationToken cancellationToken)
         {
-            var login = await context.Request.ReadFromJsonAsync<LoginDto>();
-            // TODO: authentication logic
-            return Results.Ok(new { Token = "fake-jwt-token" });
+            var result = await mediator.Send(command, cancellationToken);
+
+            return TypedResults.Ok(result);
         }
 
-        private static Task<IResult> Logout(HttpContext context, CancellationToken cancellationToken)
+        private static async Task<Results<Created<SignUpResponseDto>, Conflict<Error>>> SignUpAsync(
+            IMediator mediator,
+            SignUpCommand command,
+            CancellationToken cancellationToken)
         {
-            // TODO: clear token/session logic
-            return Task.FromResult(Results.Ok(new { Message = "Logged out" }));
+            var result = await mediator.Send(command, cancellationToken);
+            if (result.IsSuccess)
+            {
+                return TypedResults.Created("", result.Value);
+            }
+
+            return TypedResults.Conflict(result.Error);
+        }
+
+        private static async Task<Ok<SuccessResponseDto>> VerifyAccountAsync(
+            IMediator mediator,
+            VerifyAccountCommand command,
+            CancellationToken cancellationToken)
+        {
+            var result = await mediator.Send(command, cancellationToken);
+
+            return TypedResults.Ok(result);
         }
     }
-
-    // Example DTOs
-    public record UserDto(string Email, string Password);
-    public record LoginDto(string Email, string Password);
 }

@@ -15,7 +15,7 @@ namespace Capstone.LMS.Domain.Primitives
         }
 
         public Guid Id { get; protected set; }
-
+        public Guid PublicId { get; private set; }
         public Guid CreatedBy { get; private set; }
         public Guid ModifiedBy { get; private set; }
         public Guid? DeletedBy { get; private set; }
@@ -92,5 +92,8 @@ namespace Capstone.LMS.Domain.Primitives
         {
             return Id.GetHashCode();
         }
+
+        public void GeneratePublicId() =>
+            PublicId = Guid.NewGuid();
     }
 }

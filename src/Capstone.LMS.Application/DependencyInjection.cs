@@ -12,7 +12,15 @@ namespace Capstone.LMS.Application
         public static IServiceCollection AddApplication(this IServiceCollection services, ConfigurationManager configuration)
         {
             var assembly = typeof(DependencyInjection).Assembly;
+            
+            AddMediatR(services, assembly);
+            AddMapster(services);
 
+            return services;
+        }
+
+        private static void AddMediatR(IServiceCollection services, System.Reflection.Assembly assembly)
+        {
             services.AddMediatR(config =>
             {
                 config.RegisterServicesFromAssembly(assembly);
@@ -20,14 +28,14 @@ namespace Capstone.LMS.Application
                 config.AddOpenBehavior(typeof(ValidationBehavior<,>));
             });
             services.AddValidatorsFromAssembly(assembly);
-            //services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+        }
 
+        private static void AddMapster(IServiceCollection services)
+        {
             var mapperConfig = TypeAdapterConfig.GlobalSettings.ConfigureMappings();
 
             services.AddSingleton(mapperConfig);
             services.AddMapster();
-
-            return services;
         }
     }
 }
