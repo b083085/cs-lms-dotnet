@@ -2,7 +2,6 @@
 using Capstone.LMS.Application.Dtos;
 using Capstone.LMS.Application.Dtos.Auth;
 using Capstone.LMS.Application.Queries.Auth;
-using Capstone.LMS.Domain.Constants;
 using Capstone.LMS.Domain.Shared;
 using Carter;
 using MediatR;
@@ -14,35 +13,29 @@ namespace Capstone.LMS.Presentation.Endpoints
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            var group = CreateMapGroup(app, "auth")
-                .WithTags("Auth");
+            var auth = CreateMapGroup(app, "auth")
+                .WithTags("Auth")
+                .RequireAuthorization();
 
-            group.MapPost("login", LoginAsync)
-                 .WithName("Login")
-                 .WithSummary("Authenticate user.");
+            auth.MapPost("login", LoginAsync)
+                 .WithSummary("Authenticate user.")
+                 .AllowAnonymous();
 
-            group.MapPost("logout", LogoutAsync)
-                 .WithName("Logout")
-                 .WithSummary("Sign out the current user.")
-                 .RequireAuthorization(policy => policy.RequireRole(
-                     Roles.Administrator,
-                     Roles.Librarian,
-                     Roles.Borrower));
+            auth.MapPost("logout", LogoutAsync)
+                 .WithSummary("Sign out the current user.");
 
-            group.MapPost("signup", SignUpAsync)
-                 .WithName("SignUp")
-                 .WithSummary("Register a new user.");
+            auth.MapPost("signup", SignUpAsync)
+                 .WithSummary("Register a new user.")
+                 .AllowAnonymous();
 
-            group.MapPost("verify", VerifyAccountAsync)
-                 .WithName("VerifyAccount")
-                 .WithSummary("Verifies the user account.");
+            auth.MapPost("verify", VerifyAccountAsync)
+                 .WithSummary("Verifies the user account.")
+                 .AllowAnonymous();
 
-            group.MapPost("refresh-token", GetRefreshTokenAsync)
-                 .WithName("RefreshToken")
+            auth.MapPost("refresh-token", GetRefreshTokenAsync)
                  .WithSummary("Gets or creates a refresh token.");
 
-            group.MapDelete("refresh-token/revoke/{userId}", RevokeRefreshTokenAsync)
-                 .WithName("RevokeRefreshToken")
+            auth.MapDelete("refresh-token/revoke/{userId}", RevokeRefreshTokenAsync)
                  .WithSummary("Revokes the refresh tokens of the user.");
         }
 
@@ -52,12 +45,10 @@ namespace Capstone.LMS.Presentation.Endpoints
             CancellationToken cancellationToken)
         {
             var result = await mediator.Send(command, cancellationToken);
-            if (result.IsSuccess)
-            {
-                return TypedResults.Ok(result.Value);
-            }
 
-            return TypedResults.Unauthorized();
+            return result.IsSuccess ?
+                TypedResults.Ok(result.Value) :
+                TypedResults.Unauthorized();
         }
 
         private static async Task<Ok<SuccessResponseDto>> LogoutAsync(
@@ -70,18 +61,16 @@ namespace Capstone.LMS.Presentation.Endpoints
             return TypedResults.Ok(result);
         }
 
-        private static async Task<Results<Created<SignUpResponseDto>, Conflict<Error>>> SignUpAsync(
+        private static async Task<Results<Ok<SignUpResponseDto>, Conflict<Error>>> SignUpAsync(
             IMediator mediator,
             SignUpCommand command,
             CancellationToken cancellationToken)
         {
             var result = await mediator.Send(command, cancellationToken);
-            if (result.IsSuccess)
-            {
-                return TypedResults.Created("", result.Value);
-            }
 
-            return TypedResults.Conflict(result.Error);
+            return result.IsSuccess ?
+                TypedResults.Ok(result.Value) :
+                TypedResults.Conflict(result.Error);
         }
 
         private static async Task<Ok<SuccessResponseDto>> VerifyAccountAsync(
@@ -100,12 +89,10 @@ namespace Capstone.LMS.Presentation.Endpoints
             CancellationToken cancellationToken)
         {
             var result = await mediator.Send(query, cancellationToken);
-            if (result.IsSuccess)
-            {
-                return TypedResults.Ok(result.Value);
-            }
 
-            return TypedResults.BadRequest(result.Error);
+            return result.IsSuccess ?
+                TypedResults.Ok(result.Value) :
+                TypedResults.BadRequest(result.Error);
         }
 
         private static async Task<Ok<SuccessResponseDto>> RevokeRefreshTokenAsync(

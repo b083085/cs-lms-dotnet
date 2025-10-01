@@ -6,35 +6,32 @@ using Capstone.LMS.Domain.Shared;
 using Carter;
 using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
 
 namespace Capstone.LMS.Presentation.Endpoints
 {
     public class UserEndpoints : BaseEndpoints, ICarterModule
     {
+        private const string _getUser = "GetUser";
+
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            var group = CreateMapGroup(app, "users")
+            var user = CreateMapGroup(app, "users")
                 .WithTags("User");
 
-            group.MapGet("{userId}", GetUserAsync)
-                 .WithName("GetUser")
+            user.MapGet("{userId}", GetUserAsync)
+                 .WithName(_getUser)
                  .WithSummary("Gets the user details.");
 
-            group.MapPost("list", GetUsersAsync)
-                 .WithName("GetUsers")
+            user.MapPost("list", GetUsersAsync)
                  .WithSummary("Gets a list of users.");
 
-            group.MapPost("", CreateUserAsync)
-                 .WithName("CreateUser")
+            user.MapPost("", CreateUserAsync)
                  .WithSummary("Creates a user.");
 
-            group.MapDelete("{userId}", DeleteUserAsync)
-                 .WithName("DeleteUser")
-                 .WithSummary("Deletes a user.");
+            user.MapDelete("{userId}", DeleteUserAsync)
+                 .WithSummary("Deletes the user.");
 
-            group.MapPut("", UpdateUserAsync)
-                 .WithName("UpdateUser")
+            user.MapPut("", UpdateUserAsync)
                  .WithSummary("Updates the user.");
         }
 
@@ -44,12 +41,10 @@ namespace Capstone.LMS.Presentation.Endpoints
             CancellationToken cancellationToken)
         {
             var result = await mediator.Send(new GetUserQuery(userId), cancellationToken);
-            if (result.IsSuccess)
-            {
-                return TypedResults.Ok(result.Value);
-            }
 
-            return TypedResults.NotFound(result.Error);
+            return result.IsSuccess ?
+                TypedResults.Ok(result.Value) :
+                TypedResults.NotFound(result.Error); 
         }
 
         private static async Task<Ok<ListResponseDto<GetUserResponseDto>>> GetUsersAsync(
@@ -65,15 +60,14 @@ namespace Capstone.LMS.Presentation.Endpoints
         private static async Task<Results<Created<CreateUserResponseDto>, Conflict<Error>>> CreateUserAsync(
             IMediator mediator,
             CreateUserCommand command,
+            LinkGenerator links,
             CancellationToken cancellationToken)
         {
             var result = await mediator.Send(command, cancellationToken);
-            if (result.IsSuccess)
-            {
-                return TypedResults.Created("", result.Value);
-            }
 
-            return TypedResults.Conflict(result.Error);
+            return result.IsSuccess ?
+                TypedResults.Created(links.GetPathByName(_getUser, new { userId = result.Value.UserId }), result.Value) :
+                TypedResults.Conflict(result.Error);
         }
 
         private static async Task<Ok<SuccessResponseDto>> DeleteUserAsync(
@@ -92,12 +86,10 @@ namespace Capstone.LMS.Presentation.Endpoints
             CancellationToken cancellationToken)
         {
             var result = await mediator.Send(command, cancellationToken);
-            if (result.IsSuccess)
-            {
-                return TypedResults.Ok(result.Value);
-            }
 
-            return TypedResults.BadRequest(result.Error);
+            return result.IsSuccess ?
+                TypedResults.Ok(result.Value) :
+                TypedResults.BadRequest(result.Error);
         }
     }
 }

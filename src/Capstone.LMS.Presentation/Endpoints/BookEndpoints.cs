@@ -6,55 +6,48 @@ using Capstone.LMS.Domain.Shared;
 using Carter;
 using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
 
 namespace Capstone.LMS.Presentation.Endpoints
 {
     public class BookEndpoints : BaseEndpoints, ICarterModule
     {
+        private const string _getBook = "GetBook";
+
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            var group = CreateMapGroup(app, "books")
+            var book = CreateMapGroup(app, "books")
+                .RequireAuthorization()
                 .WithTags("Book");
 
-            group.MapGet("{bookId}", GetBookAsync)
-                 .WithName("GetBook")
+            book.MapGet("{bookId}", GetBookAsync)
+                 .WithName(_getBook)
                  .WithSummary("Gets the book details.");
 
-            group.MapPost("list", GetBooksAsync)
-                 .WithName("GetBooks")
-                 .WithSummary("Gets a list of books.");
+            book.MapPost("list", GetBooksAsync)
+                 .WithSummary("Gets the list of books.");
 
-            group.MapPost("borrowed", GetBorrowedBooksAsync)
-                 .WithName("GetBorrowedBooks")
-                 .WithSummary("Gets a list of borrowed books.");
+            book.MapPost("borrowed", GetBorrowedBooksAsync)
+                 .WithSummary("Gets the list of borrowed books.");
 
-            group.MapGet("overdue", GetOverdueBooksAsync)
-                 .WithName("GetOverdueBooks")
-                 .WithSummary("Gets a list of overdue books.");
+            book.MapGet("overdue", GetOverdueBooksAsync)
+                 .WithSummary("Gets the list of overdue books.");
 
-            group.MapGet("popular", GetPopularBooksAsync)
-                 .WithName("GetPopularBooks")
-                 .WithSummary("Gets a list of popular books.");
+            book.MapGet("popular", GetPopularBooksAsync)
+                 .WithSummary("Gets the list of popular books.");
 
-            group.MapPost("borrow", BorrowBookAsync)
-                 .WithName("BorrowBook")
-                 .WithSummary("Borrows a book.");
+            book.MapPost("borrow", BorrowBookAsync)
+                 .WithSummary("Borrows the book.");
 
-            group.MapPost("", CreateBookAsync)
-                 .WithName("CreateBook")
+            book.MapPost("", CreateBookAsync)
                  .WithSummary("Creates a book.");
 
-            group.MapDelete("{bookId}", DeleteBookAsync)
-                 .WithName("DeleteBook")
-                 .WithSummary("Deletes a book.");
+            book.MapDelete("{bookId}", DeleteBookAsync)
+                 .WithSummary("Deletes the book.");
 
-            group.MapPost("return", ReturnBookAsync)
-                 .WithName("ReturnBook")
+            book.MapPost("return", ReturnBookAsync)
                  .WithSummary("Returns the book.");
 
-            group.MapPut("", UpdateBookAsync)
-                 .WithName("UpdateBook")
+            book.MapPut("", UpdateBookAsync)
                  .WithSummary("Updates the book.");
         }
 
@@ -64,12 +57,10 @@ namespace Capstone.LMS.Presentation.Endpoints
             CancellationToken cancellationToken)
         {
             var result = await mediator.Send(new GetBookQuery(bookId), cancellationToken);
-            if (result.IsSuccess)
-            {
-                return TypedResults.Ok(result.Value);
-            }
-
-            return TypedResults.NotFound(result.Error);
+            
+            return result.IsSuccess ?
+                TypedResults.Ok(result.Value) :
+                TypedResults.NotFound(result.Error);
         }
 
         private static async Task<Ok<ListResponseDto<GetBookResponseDto>>> GetBooksAsync(
@@ -123,15 +114,14 @@ namespace Capstone.LMS.Presentation.Endpoints
         private static async Task<Results<Created<CreateBookResponseDto>, Conflict<Error>>> CreateBookAsync(
             IMediator mediator,
             CreateBookCommand command,
+            LinkGenerator links,
             CancellationToken cancellationToken)
         {
             var result = await mediator.Send(command, cancellationToken);
-            if (result.IsSuccess)
-            {
-                return TypedResults.Created("", result.Value);
-            }
-
-            return TypedResults.Conflict(result.Error);
+            
+            return result.IsSuccess ?
+                TypedResults.Created(links.GetPathByName(_getBook, new { bookId = result.Value.BookId }), result.Value) :
+                TypedResults.Conflict(result.Error);
         }
 
         private static async Task<Ok<SuccessResponseDto>> DeleteBookAsync(
@@ -160,12 +150,10 @@ namespace Capstone.LMS.Presentation.Endpoints
             CancellationToken cancellationToken)
         {
             var result = await mediator.Send(command, cancellationToken);
-            if (result.IsSuccess)
-            {
-                return TypedResults.Ok(result.Value);
-            }
 
-            return TypedResults.BadRequest(result.Error);
+            return result.IsSuccess ?
+                TypedResults.Ok(result.Value) :
+                TypedResults.BadRequest(result.Error);
         }
     }
 }

@@ -14,8 +14,7 @@ namespace Capstone.LMS.Presentation.Endpoints
                 .WithTags("Dashboard");
 
             group.MapGet("{role}", GetDashboardAsync)
-                 .WithName("GetDashboard")
-                 .WithSummary("Gets the dashboard components by role.");
+                 .WithSummary("Gets the dashboard by role.");
         }
 
         private static async Task<Ok<GetDashboardResponseDto>> GetDashboardAsync(
