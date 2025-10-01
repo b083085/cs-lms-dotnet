@@ -1,5 +1,7 @@
-﻿using Capstone.LMS.Application.Persistence;
+﻿using Capstone.LMS.Application.Commands.Auth;
+using Capstone.LMS.Application.Persistence;
 using MediatR;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Transactions;
@@ -12,12 +14,16 @@ namespace Capstone.LMS.Application.Behaviors
     {
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
+        private readonly List<string> _skipCommands = [
+            nameof(SignUpCommand)];
+
         public async Task<TResponse> Handle(
             TRequest request, 
             RequestHandlerDelegate<TResponse> next, 
             CancellationToken cancellationToken)
         {
-            if (IsNotCommand())
+            if (IsNotCommand() ||
+                CanSkipSaveChanges())
             {
                 return await next(cancellationToken);
             }
@@ -36,6 +42,11 @@ namespace Capstone.LMS.Application.Behaviors
         private static bool IsNotCommand()
         {
             return !typeof(TRequest).Name.EndsWith("Command");
+        }
+
+        private bool CanSkipSaveChanges()
+        {
+            return _skipCommands.Contains(typeof(TRequest).Name);   
         }
     }
 }

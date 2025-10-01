@@ -15,14 +15,15 @@ namespace Capstone.LMS.Persistence.Migrations
                 name: "Authors",
                 columns: table => new
                 {
+                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedOnUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ModifiedOnUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    DeletedOnUtc = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    CreatedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    DeletedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    PublicId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -33,14 +34,15 @@ namespace Capstone.LMS.Persistence.Migrations
                 name: "Genres",
                 columns: table => new
                 {
+                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedOnUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ModifiedOnUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    DeletedOnUtc = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    CreatedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    DeletedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    PublicId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -51,16 +53,17 @@ namespace Capstone.LMS.Persistence.Migrations
                 name: "Permissions",
                 columns: table => new
                 {
+                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedOnUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ModifiedOnUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    DeletedOnUtc = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     PermissionName = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
                     Enabled = table.Column<bool>(type: "bit", nullable: false),
                     BitwiseValue = table.Column<int>(type: "int", nullable: false),
-                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    CreatedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    DeletedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    PublicId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -71,13 +74,13 @@ namespace Capstone.LMS.Persistence.Migrations
                 name: "Roles",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedOnUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ModifiedOnUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DeletedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    CreatedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    DeletedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DeletedOnUtc = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true)
@@ -91,16 +94,17 @@ namespace Capstone.LMS.Persistence.Migrations
                 name: "SubPermissions",
                 columns: table => new
                 {
+                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedOnUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ModifiedOnUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    DeletedOnUtc = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     SubPermissionName = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
                     Enabled = table.Column<bool>(type: "bit", nullable: false),
                     BitwiseValue = table.Column<int>(type: "int", nullable: false),
-                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    CreatedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    DeletedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    PublicId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -111,16 +115,22 @@ namespace Capstone.LMS.Persistence.Migrations
                 name: "Users",
                 columns: table => new
                 {
+                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedOnUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ModifiedOnUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    DeletedOnUtc = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    PublicId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     FirstName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Gender = table.Column<string>(type: "nvarchar(1)", maxLength: 1, nullable: false),
-                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    CreatedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    DeletedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ActiveStatus = table.Column<int>(type: "int", nullable: false),
+                    ActivatedOnUtc = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    SuspendedOnUtc = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    SuspendReason = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    BorrowingLimit = table.Column<int>(type: "int", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -145,6 +155,12 @@ namespace Capstone.LMS.Persistence.Migrations
                 name: "Books",
                 columns: table => new
                 {
+                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedOnUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ModifiedOnUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    DeletedOnUtc = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
                     Summary = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -153,12 +169,7 @@ namespace Capstone.LMS.Persistence.Migrations
                     GenreId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     TotalCopies = table.Column<int>(type: "int", nullable: false),
                     AuthorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    CreatedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    DeletedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    PublicId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -202,16 +213,17 @@ namespace Capstone.LMS.Persistence.Migrations
                 name: "AccessControls",
                 columns: table => new
                 {
+                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedOnUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ModifiedOnUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    DeletedOnUtc = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     RoleId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     PermissionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     SubPermissionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    CreatedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    DeletedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    PublicId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -240,15 +252,16 @@ namespace Capstone.LMS.Persistence.Migrations
                 name: "DefaultPermissions",
                 columns: table => new
                 {
+                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedOnUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ModifiedOnUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    DeletedOnUtc = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     PermissionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     SubPermissionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    CreatedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    DeletedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    PublicId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -263,6 +276,26 @@ namespace Capstone.LMS.Persistence.Migrations
                         name: "FK_DefaultPermissions_SubPermissions_SubPermissionId",
                         column: x => x.SubPermissionId,
                         principalTable: "SubPermissions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "RefreshTokens",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Token = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ExpiresOnUtc = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RefreshTokens", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_RefreshTokens_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -356,19 +389,21 @@ namespace Capstone.LMS.Persistence.Migrations
                 name: "BorrowedBooks",
                 columns: table => new
                 {
+                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedOnUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ModifiedOnUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    DeletedOnUtc = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     BookId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    IssuedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    DueAtUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ReturnedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    BorrowedOnUtc = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DueOnUtc = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ReturnedOnUtc = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Status = table.Column<int>(type: "int", nullable: false),
-                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    CreatedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    DeletedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    BookCondition = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PublicId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -467,6 +502,18 @@ namespace Capstone.LMS.Persistence.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_RefreshTokens_Token",
+                table: "RefreshTokens",
+                column: "Token",
+                unique: true,
+                filter: "[Token] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RefreshTokens_UserId",
+                table: "RefreshTokens",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_RoleClaims_RoleId",
                 table: "RoleClaims",
                 column: "RoleId");
@@ -518,6 +565,9 @@ namespace Capstone.LMS.Persistence.Migrations
 
             migrationBuilder.DropTable(
                 name: "DefaultPermissions");
+
+            migrationBuilder.DropTable(
+                name: "RefreshTokens");
 
             migrationBuilder.DropTable(
                 name: "RoleClaims");

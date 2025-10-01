@@ -1,5 +1,6 @@
 ﻿using Capstone.LMS.Domain.Enums;
 using Capstone.LMS.Domain.Primitives;
+using Capstone.LMS.Domain.ValueObjects;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
@@ -16,15 +17,25 @@ namespace Capstone.LMS.Domain.Entities
 
         }
 
-        private User(Guid id)
+        private User(
+            Guid id,
+            string firstName,
+            string lastName,
+            Gender gender,
+            string email)
         {
             Id = id;
+            FirstName = firstName;
+            LastName = lastName;
+            Gender = gender;
+            Email = email;
+            UserName = email;
         }
 
         public Guid PublicId { get; private set; }  
         public string FirstName { get; private set; }
         public string LastName { get; private set; }
-        public string Gender { get; private set; }
+        public Gender Gender { get; private set; }
         public ActiveStatus ActiveStatus { get; private set; }
         public Guid CreatedBy { get; private set; }
         public Guid ModifiedBy { get; private set; }
@@ -38,6 +49,21 @@ namespace Capstone.LMS.Domain.Entities
         public int BorrowingLimit { get; private set; }
 
         public IReadOnlyList<BorrowedBook> BorrowedBooks => [.. _borrowedBooks];
+
+        public static User Create(
+            Guid id,
+            string firstName,
+            string lastName,
+            Gender gender,
+            string email)
+        {
+            return new User(
+                id,
+                firstName,
+                lastName,
+                gender,
+                email);
+        }
 
         public void Active()
         {

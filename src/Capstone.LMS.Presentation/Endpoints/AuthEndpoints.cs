@@ -61,7 +61,7 @@ namespace Capstone.LMS.Presentation.Endpoints
             return TypedResults.Ok(result);
         }
 
-        private static async Task<Results<Ok<SignUpResponseDto>, Conflict<Error>>> SignUpAsync(
+        private static async Task<Results<Ok, Conflict<Error>>> SignUpAsync(
             IMediator mediator,
             SignUpCommand command,
             CancellationToken cancellationToken)
@@ -69,7 +69,7 @@ namespace Capstone.LMS.Presentation.Endpoints
             var result = await mediator.Send(command, cancellationToken);
 
             return result.IsSuccess ?
-                TypedResults.Ok(result.Value) :
+                TypedResults.Ok() :
                 TypedResults.Conflict(result.Error);
         }
 

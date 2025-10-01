@@ -31,13 +31,16 @@ namespace Capstone.LMS.Persistence.Extensions
 
         private static Role CreateRole(Guid roleId, string roleName)
         {
-            return new()
+            var role = new Role
             {
                 Id = roleId,
                 Name = roleName,
                 NormalizedName = roleName.ToUpper(),
                 ConcurrencyStamp = Guid.NewGuid().ToString()
             };
+            role.Created(Guid.Empty);
+
+            return role;
         }
     }
 }

@@ -36,23 +36,35 @@ namespace Capstone.LMS.Persistence
 
         private static void AddDbContext(IServiceCollection services, ConfigurationManager configuration)
         {
+            services.AddScoped<AuditSaveChangesInterceptor>();
+            services.AddScoped<PublicIdSaveChangesInterceptor>();
+
+
             var dbOptions = configuration
                             .GetSection(DatabaseOptionsConfiguration.ConfigurationSectionName)
                             .Get<DatabaseOptions>();
 
-            Action<DbContextOptionsBuilder> dbContextOptions = options => options
-                .UseSqlServer(dbOptions.ConnectionString, opt => opt.CommandTimeout(dbOptions.CommandTimeout))
-                .AddInterceptors(new PublicIdSaveChangesInterceptor());
+            Action<IServiceProvider, DbContextOptionsBuilder> dbContextOptions = (sp, options) =>
+            {
+                options.UseSqlServer(dbOptions.ConnectionString, opt => opt.CommandTimeout(dbOptions.CommandTimeout));
+
+                var publicIdInterceptor = sp.GetRequiredService<PublicIdSaveChangesInterceptor>();
+                var auditInterceptor = sp.GetRequiredService<AuditSaveChangesInterceptor>();
+
+                options.AddInterceptors(
+                    publicIdInterceptor,
+                    auditInterceptor);
+            };
 
             services.AddDbContext<LmsContext>(dbContextOptions, ServiceLifetime.Scoped);
             services.AddDbContextFactory<LmsContext>(dbContextOptions, ServiceLifetime.Scoped);
 
             services.AddIdentity<User, Role>(opt =>
             {
-                opt.SignIn.RequireConfirmedAccount = false;
-                opt.Password.RequireDigit = false;
-                opt.Password.RequireUppercase = false;
-                opt.Password.RequireLowercase = false;
+                opt.SignIn.RequireConfirmedAccount = true;
+                opt.Password.RequireDigit = true;
+                opt.Password.RequireUppercase = true;
+                opt.Password.RequireLowercase = true;
                 opt.Password.RequireNonAlphanumeric = false;
                 opt.Password.RequiredLength = 8;
                 opt.Password.RequiredUniqueChars = 0;
@@ -65,7 +77,7 @@ namespace Capstone.LMS.Persistence
                 opt.User.RequireUniqueEmail = true;
 
                 // signin service
-                opt.SignIn.RequireConfirmedEmail = false;
+                opt.SignIn.RequireConfirmedEmail = true;
             })
                 .AddEntityFrameworkStores<LmsContext>()
                 .AddDefaultTokenProviders();

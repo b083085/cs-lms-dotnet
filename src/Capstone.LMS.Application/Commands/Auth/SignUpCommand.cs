@@ -1,5 +1,4 @@
-﻿using Capstone.LMS.Application.Dtos.Auth;
-using Capstone.LMS.Domain.Shared;
+﻿using Capstone.LMS.Domain.Shared;
 using MediatR;
 
 namespace Capstone.LMS.Application.Commands.Auth
@@ -10,5 +9,5 @@ namespace Capstone.LMS.Application.Commands.Auth
         string Gender,
         string Email,
         string Password,
-        string ConfirmPassword) : IRequest<Result<SignUpResponseDto>>;
+        string ConfirmPassword) : IRequest<Result>;
 }
