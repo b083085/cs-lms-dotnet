@@ -9,6 +9,7 @@ namespace Capstone.LMS.Persistence.Configurations
     {
         public void Configure(EntityTypeBuilder<User> builder)
         {
+            builder.Property(p => p.PublicId).IsRequired();
             builder.Property(p => p.FirstName).IsRequired().HasMaxLength(50);
             builder.Property(p => p.LastName).IsRequired().HasMaxLength(50);
             builder.Property(p => p.Gender).IsRequired().HasMaxLength(1);

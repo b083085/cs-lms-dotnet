@@ -2,6 +2,9 @@
 {
     public class SuccessResponseDto
     {
-        public bool Success { get; set; }
+        public bool Succeeded { get; private set; }
+
+        public void Success() => Succeeded = true;
+        public void Failure() => Succeeded = false;
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Asp.Versioning;
 using Capstone.LMS.Presentation.OpenApi;
+using Microsoft.OpenApi.Models;
 
 namespace Capstone.LMS.Presentation
 {
@@ -16,7 +17,32 @@ namespace Capstone.LMS.Presentation
         private static void AddSwagger(IServiceCollection services)
         {
             services.AddEndpointsApiExplorer();
-            services.AddSwaggerGen();
+            services.AddSwaggerGen(options =>
+            {
+                options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    In = ParameterLocation.Header,
+                    Description = "Please enter a valid token",
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.Http,
+                    BearerFormat = "JWT",
+                    Scheme = "Bearer"
+                });
+                options.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type=ReferenceType.SecurityScheme,
+                                Id="Bearer"
+                            }
+                        },
+                        Array.Empty<string>()
+                    }
+                });
+            });
             services.ConfigureOptions<ConfigureSwaggerGenOptions>();
         }
 

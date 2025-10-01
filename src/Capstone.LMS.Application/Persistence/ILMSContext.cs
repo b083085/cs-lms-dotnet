@@ -10,5 +10,6 @@ namespace Capstone.LMS.Application.Persistence
         DbSet<BorrowedBook> BorrowedBooks { get; }
         DbSet<Permission> Permissions { get; }
         DbSet<SubPermission> SubPermissions { get; }
+        DbSet<RefreshToken> RefreshTokens { get; }
     }
 }

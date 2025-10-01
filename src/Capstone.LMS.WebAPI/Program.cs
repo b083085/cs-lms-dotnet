@@ -1,5 +1,6 @@
 using Capstone.LMS.Application;
 using Capstone.LMS.Infrastructure;
+using Capstone.LMS.Infrastructure.Cors;
 using Capstone.LMS.Persistence;
 using Capstone.LMS.Presentation;
 using Carter;
@@ -22,6 +23,8 @@ host.UseSerilog((ctx, config) =>
 config.ReadFrom.Configuration(ctx.Configuration));
 
 var app = builder.Build();
+
+app.MapCarter();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -46,11 +49,9 @@ app.UseSerilogRequestLogging();
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-//app.UseCors();
-//app.UseAuthentication();
-//app.UseAuthorization();
-
-app.MapCarter();
+app.UseCors(CorsPolicy.AllowOrigin);
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.Run();
 

@@ -10,6 +10,7 @@ namespace Capstone.LMS.Persistence.Configurations
         {
             builder.HasKey(p => p.Id);
 
+            builder.Property(p => p.PublicId).IsRequired();
             builder.Property(p => p.CreatedBy).IsRequired().HasColumnOrder(100);
             builder.Property(p => p.CreatedOnUtc).IsRequired().HasColumnOrder(101);
             builder.Property(p => p.ModifiedBy).IsRequired().HasColumnOrder(102);

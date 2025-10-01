@@ -1,0 +1,23 @@
+﻿using Capstone.LMS.Domain.Constants;
+using Capstone.LMS.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+namespace Capstone.LMS.Persistence.Configurations
+{
+    internal sealed class RefreshTokenConfiguration : IEntityTypeConfiguration<RefreshToken>
+    {
+        public void Configure(EntityTypeBuilder<RefreshToken> builder)
+        {
+            builder.HasKey(x => x.Id);
+
+            builder.Property(x => x.Token).HasMaxLength(200);
+
+            builder.HasIndex(x => x.Token).IsUnique();
+
+            builder.HasOne(x => x.User).WithMany().HasForeignKey(x => x.UserId);   
+
+            builder.ToTable(EntityTables.RefreshTokens);
+        }
+    }
+}

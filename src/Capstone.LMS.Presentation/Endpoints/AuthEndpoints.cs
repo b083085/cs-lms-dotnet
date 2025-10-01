@@ -1,6 +1,8 @@
 ﻿using Capstone.LMS.Application.Commands.Auth;
 using Capstone.LMS.Application.Dtos;
 using Capstone.LMS.Application.Dtos.Auth;
+using Capstone.LMS.Application.Queries.Auth;
+using Capstone.LMS.Domain.Constants;
 using Capstone.LMS.Domain.Shared;
 using Carter;
 using MediatR;
@@ -21,18 +23,30 @@ namespace Capstone.LMS.Presentation.Endpoints
 
             group.MapPost("logout", LogoutAsync)
                  .WithName("Logout")
-                 .WithSummary("Sign out the current user.");
+                 .WithSummary("Sign out the current user.")
+                 .RequireAuthorization(policy => policy.RequireRole(
+                     Roles.Administrator,
+                     Roles.Librarian,
+                     Roles.Borrower));
 
             group.MapPost("signup", SignUpAsync)
                  .WithName("SignUp")
                  .WithSummary("Register a new user.");
 
             group.MapPost("verify", VerifyAccountAsync)
-                 .WithName("Verify")
+                 .WithName("VerifyAccount")
                  .WithSummary("Verifies the user account.");
+
+            group.MapPost("refresh-token", GetRefreshTokenAsync)
+                 .WithName("RefreshToken")
+                 .WithSummary("Gets or creates a refresh token.");
+
+            group.MapDelete("refresh-token/revoke/{userId}", RevokeRefreshTokenAsync)
+                 .WithName("RevokeRefreshToken")
+                 .WithSummary("Revokes the refresh tokens of the user.");
         }
 
-        private static async Task<Results<Ok<LoginResponseDto>, BadRequest<Error>>> LoginAsync(
+        private static async Task<Results<Ok<LoginResponseDto>, UnauthorizedHttpResult>> LoginAsync(
             IMediator mediator,
             LoginCommand command,
             CancellationToken cancellationToken)
@@ -43,7 +57,7 @@ namespace Capstone.LMS.Presentation.Endpoints
                 return TypedResults.Ok(result.Value);
             }
 
-            return TypedResults.BadRequest(result.Error);
+            return TypedResults.Unauthorized();
         }
 
         private static async Task<Ok<SuccessResponseDto>> LogoutAsync(
@@ -77,6 +91,30 @@ namespace Capstone.LMS.Presentation.Endpoints
         {
             var result = await mediator.Send(command, cancellationToken);
 
+            return TypedResults.Ok(result);
+        }
+
+        private static async Task<Results<Ok<GetRefreshTokenResponseDto>, BadRequest<Error>>> GetRefreshTokenAsync(
+            IMediator mediator,
+            GetRefreshTokenQuery query,
+            CancellationToken cancellationToken)
+        {
+            var result = await mediator.Send(query, cancellationToken);
+            if (result.IsSuccess)
+            {
+                return TypedResults.Ok(result.Value);
+            }
+
+            return TypedResults.BadRequest(result.Error);
+        }
+
+        private static async Task<Ok<SuccessResponseDto>> RevokeRefreshTokenAsync(
+            IMediator mediator,
+            Guid userId,
+            CancellationToken cancellationToken)
+        {
+            var result = await mediator.Send(new RevokeRefreshTokenCommand(userId), cancellationToken);
+            
             return TypedResults.Ok(result);
         }
     }

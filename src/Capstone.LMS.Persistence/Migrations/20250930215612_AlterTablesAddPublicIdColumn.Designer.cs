@@ -4,6 +4,7 @@ using Capstone.LMS.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Capstone.LMS.Persistence.Migrations
 {
     [DbContext(typeof(LmsContext))]
-    partial class LmsContextModelSnapshot : ModelSnapshot
+    [Migration("20250930215612_AlterTablesAddPublicIdColumn")]
+    partial class AlterTablesAddPublicIdColumn
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -401,33 +404,6 @@ namespace Capstone.LMS.Persistence.Migrations
                         .IsUnique();
 
                     b.ToTable("Permissions", (string)null);
-                });
-
-            modelBuilder.Entity("Capstone.LMS.Domain.Entities.RefreshToken", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("ExpiresOnUtc")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Token")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Token")
-                        .IsUnique()
-                        .HasFilter("[Token] IS NOT NULL");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("RefreshTokens", (string)null);
                 });
 
             modelBuilder.Entity("Capstone.LMS.Domain.Entities.Role", b =>
@@ -840,17 +816,6 @@ namespace Capstone.LMS.Persistence.Migrations
                     b.Navigation("Permission");
 
                     b.Navigation("SubPermission");
-                });
-
-            modelBuilder.Entity("Capstone.LMS.Domain.Entities.RefreshToken", b =>
-                {
-                    b.HasOne("Capstone.LMS.Domain.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>

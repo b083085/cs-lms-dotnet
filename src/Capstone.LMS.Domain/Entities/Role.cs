@@ -16,6 +16,26 @@ namespace Capstone.LMS.Domain.Entities
         public DateTime ModifiedOnUtc { get; private set; }
         public DateTime? DeletedOnUtc { get; private set; }
 
+        public void Created(Guid createdBy)
+        {
+            CreatedBy = createdBy;
+            ModifiedBy = createdBy;
+            CreatedOnUtc = DateTime.UtcNow;
+            ModifiedOnUtc = DateTime.UtcNow;
+        }
+
+        public void Modified(Guid modifiedBy)
+        {
+            ModifiedBy = modifiedBy;
+            ModifiedOnUtc = DateTime.UtcNow;
+        }
+
+        public void Deleted(Guid deletedBy)
+        {
+            DeletedBy = deletedBy;
+            DeletedOnUtc = DateTime.UtcNow;
+        }
+
         public IReadOnlyList<AccessControl> AccessControls => [.. _accessControls];
     }
 }

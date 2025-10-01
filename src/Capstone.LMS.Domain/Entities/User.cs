@@ -62,6 +62,26 @@ namespace Capstone.LMS.Domain.Entities
                 _borrowedBooks.Count(p => p.Status == BorrowedStatus.Borrowed) <= BorrowingLimit;
         }
 
+        public void Created(Guid createdBy)
+        {
+            CreatedBy = createdBy;
+            ModifiedBy = createdBy;
+            CreatedOnUtc = DateTime.UtcNow;
+            ModifiedOnUtc = DateTime.UtcNow;
+        }
+
+        public void Modified(Guid modifiedBy)
+        {
+            ModifiedBy = modifiedBy;
+            ModifiedOnUtc = DateTime.UtcNow;
+        }
+
+        public void Deleted(Guid deletedBy)
+        {
+            DeletedBy = deletedBy;
+            DeletedOnUtc = DateTime.UtcNow;
+        }
+
         public void GeneratePublicId() =>
             PublicId = Guid.NewGuid();
     }

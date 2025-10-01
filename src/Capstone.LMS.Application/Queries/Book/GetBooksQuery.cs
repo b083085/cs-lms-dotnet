@@ -4,7 +4,7 @@ namespace Capstone.LMS.Application.Queries.Book
 {
     public record GetBooksQuery(
         string SearchTerm,
-        SortQuery? Sort,
-        PaginationQuery? Pagination) : 
+        SortQuery Sort,
+        PaginationQuery Pagination) : 
         ListQuery<GetBookResponseDto>(SearchTerm, Sort, Pagination); 
 }

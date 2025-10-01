@@ -10,5 +10,8 @@ namespace Capstone.LMS.Domain.Primitives
         DateTime CreatedOnUtc { get; }
         DateTime ModifiedOnUtc { get; }
         DateTime? DeletedOnUtc { get; }
+        void Created(Guid createdBy);
+        void Modified(Guid modifiedBy);
+        void Deleted(Guid deletedBy);
     }
 }
