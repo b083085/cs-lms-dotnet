@@ -48,6 +48,7 @@ app.UseSerilogRequestLogging();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseCors(CorsPolicy.AllowOrigin);
+app.UseExceptionHandler();
 app.UseAuthentication();
 app.UseAuthorization();
 

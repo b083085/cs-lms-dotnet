@@ -1,4 +1,5 @@
 ﻿using Asp.Versioning;
+using Capstone.LMS.Presentation.Exceptions;
 using Capstone.LMS.Presentation.OpenApi;
 using Microsoft.OpenApi.Models;
 
@@ -10,6 +11,7 @@ namespace Capstone.LMS.Presentation
         {
             AddSwagger(services);
             AddApiVersioning(services);
+            AddExceptionHandlers(services);
 
             return services;
         }
@@ -60,6 +62,19 @@ namespace Capstone.LMS.Presentation
                 options.GroupNameFormat = "'v'V";
                 options.SubstituteApiVersionInUrl = true;
             });
+        }
+
+        private static void AddExceptionHandlers(IServiceCollection services)
+        {
+            services.AddProblemDetails(configure =>
+            {
+                configure.CustomizeProblemDetails = context =>
+                {
+                    context.ProblemDetails.Extensions.TryAdd("requestId", context.HttpContext.TraceIdentifier);
+                };
+            });
+            services.AddExceptionHandler<ValidationExceptionHandler>();
+            services.AddExceptionHandler<GlobalExceptionHandler>();
         }
     }
 }
