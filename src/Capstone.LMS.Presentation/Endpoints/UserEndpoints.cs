@@ -16,6 +16,7 @@ namespace Capstone.LMS.Presentation.Endpoints
         public void AddRoutes(IEndpointRouteBuilder app)
         {
             var user = CreateMapGroup(app, "users")
+                .RequireAuthorization()
                 .WithTags("User");
 
             user.MapGet("{userId}", GetUserAsync)
