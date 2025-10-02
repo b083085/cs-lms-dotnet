@@ -1,10 +1,14 @@
 ﻿using Capstone.LMS.Application.Authentication;
+using Capstone.LMS.Application.Services;
 using Capstone.LMS.Infrastructure.Authentication;
+using Capstone.LMS.Infrastructure.BackgroundJobs;
 using Capstone.LMS.Infrastructure.Cors;
+using Capstone.LMS.Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Quartz;
 using System.Text;
 
 namespace Capstone.LMS.Infrastructure
@@ -15,6 +19,8 @@ namespace Capstone.LMS.Infrastructure
         {
             AddOptions(services);
             AddSecurity(services, configuration);
+            AddServices(services);
+            AddScheduler(services);
 
             return services;
         }
@@ -57,6 +63,29 @@ namespace Capstone.LMS.Infrastructure
         {
             services.ConfigureOptions<JwtOptionsConfiguration>();
             services.ConfigureOptions<CorsOptionsConfiguration>();
+        }
+
+        private static void AddServices(IServiceCollection services)
+        {
+            services.AddScoped<IEmailService, EmailService>();
+        }
+
+        private static void AddScheduler(IServiceCollection services)
+        {
+            services.AddQuartz(config =>
+            {
+                var jobKey = new JobKey(nameof(ProcessOutboxMessagesJob));
+
+                config.AddJob<ProcessOutboxMessagesJob>(jobKey)
+                .AddTrigger(trigger =>
+                    trigger.ForJob(jobKey)
+                    .WithSimpleSchedule(
+                        schedule =>
+                            schedule.WithIntervalInSeconds(10)
+                            .RepeatForever()));
+            });
+
+            services.AddQuartzHostedService();
         }
     }
 }

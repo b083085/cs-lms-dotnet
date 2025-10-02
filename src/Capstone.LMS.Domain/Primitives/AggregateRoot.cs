@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Capstone.LMS.Domain.Primitives
 {
-    public abstract class AggregateRoot : Entity
+    public abstract class AggregateRoot : Entity, IAggregateRoot
     {
         private readonly List<IDomainEvent> _domainEvents = [];
 
@@ -15,6 +16,10 @@ namespace Capstone.LMS.Domain.Primitives
             : base(id)
         {
         }
+
+        public void ClearDomainEvents() => _domainEvents.Clear();
+
+        public IReadOnlyCollection<IDomainEvent> GetDomainEvents() => _domainEvents.ToList();
 
         protected void RaiseDomainEvent(IDomainEvent domainEvent)
         {

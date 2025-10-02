@@ -23,5 +23,6 @@
         public const string Permissions = "Permissions";
         public const string SubPermissions = "SubPermissions";
         public const string RefreshTokens = "RefreshTokens";
+        public const string OutboxMessages = "OutboxMessages";
     }
 }

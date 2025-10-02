@@ -38,6 +38,7 @@ namespace Capstone.LMS.Persistence
         {
             services.AddScoped<AuditSaveChangesInterceptor>();
             services.AddScoped<PublicIdSaveChangesInterceptor>();
+            services.AddScoped<ConvertDomainEventsToOutboxMessagesInterceptor>();
 
 
             var dbOptions = configuration
@@ -50,10 +51,12 @@ namespace Capstone.LMS.Persistence
 
                 var publicIdInterceptor = sp.GetRequiredService<PublicIdSaveChangesInterceptor>();
                 var auditInterceptor = sp.GetRequiredService<AuditSaveChangesInterceptor>();
+                var convertDomainEventsToOutboxMessageInterceptor = sp.GetRequiredService<ConvertDomainEventsToOutboxMessagesInterceptor>();
 
                 options.AddInterceptors(
                     publicIdInterceptor,
-                    auditInterceptor);
+                    auditInterceptor,
+                    convertDomainEventsToOutboxMessageInterceptor);
             };
 
             services.AddDbContext<LmsContext>(dbContextOptions, ServiceLifetime.Scoped);

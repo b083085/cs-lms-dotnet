@@ -1,4 +1,5 @@
-﻿using Capstone.LMS.Domain.Enums;
+﻿using Capstone.LMS.Domain.DomainEvents;
+using Capstone.LMS.Domain.Enums;
 using Capstone.LMS.Domain.Primitives;
 using Capstone.LMS.Domain.ValueObjects;
 using Microsoft.AspNetCore.Identity;
@@ -8,8 +9,9 @@ using System.Linq;
 
 namespace Capstone.LMS.Domain.Entities
 {
-    public sealed class User : IdentityUser<Guid>, IAudit
+    public class User : IdentityUser<Guid>, IAudit, IAggregateRoot
     {
+        private readonly List<IDomainEvent> _domainEvents = [];
         private List<BorrowedBook> _borrowedBooks = [];
 
         private User()
@@ -57,12 +59,16 @@ namespace Capstone.LMS.Domain.Entities
             Gender gender,
             string email)
         {
-            return new User(
+            var user = new User(
                 id,
                 firstName,
                 lastName,
                 gender,
                 email);
+
+            user.RaiseDomainEvent(new UserRegisteredDomainEvent(user.Id));
+
+            return user;
         }
 
         public void Active()
@@ -108,7 +114,12 @@ namespace Capstone.LMS.Domain.Entities
             DeletedOnUtc = DateTime.UtcNow;
         }
 
-        public void GeneratePublicId() =>
-            PublicId = Guid.NewGuid();
+        public void GeneratePublicId() => PublicId = Guid.NewGuid();
+
+        protected void RaiseDomainEvent(IDomainEvent domainEvent) => _domainEvents.Add(domainEvent);
+
+        public void ClearDomainEvents() => _domainEvents.Clear();
+
+        public IReadOnlyCollection<IDomainEvent> GetDomainEvents() => [.. _domainEvents];
     }
 }
