@@ -1,9 +1,12 @@
 ﻿using Capstone.LMS.Application.Authentication;
+using Capstone.LMS.Application.Email;
 using Capstone.LMS.Application.Services;
 using Capstone.LMS.Infrastructure.Authentication;
 using Capstone.LMS.Infrastructure.BackgroundJobs;
 using Capstone.LMS.Infrastructure.Cors;
+using Capstone.LMS.Infrastructure.Email;
 using Capstone.LMS.Infrastructure.Services;
+using Capstone.LMS.Infrastructure.Site;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,6 +22,7 @@ namespace Capstone.LMS.Infrastructure
         {
             AddOptions(services);
             AddSecurity(services, configuration);
+            AddEmail(services);
             AddServices(services);
             AddScheduler(services);
 
@@ -54,20 +58,29 @@ namespace Capstone.LMS.Infrastructure
             options.AddPolicy(Cors.CorsPolicy.AllowOrigin,
                                 policy => policy
                                 .WithOrigins(corsOptions.Origins?.ToArray())
+                                //.AllowAnyOrigin()
                                 .AllowAnyHeader()
                                 .AllowAnyMethod()
-                                .AllowCredentials()));
+                                .AllowCredentials()
+                                ));
         }
 
         private static void AddOptions(IServiceCollection services)
         {
             services.ConfigureOptions<JwtOptionsConfiguration>();
             services.ConfigureOptions<CorsOptionsConfiguration>();
+            services.ConfigureOptions<SmtpEmailOptionsConfiguration>();
+            services.ConfigureOptions<SiteOptionsConfiguration>();
         }
 
         private static void AddServices(IServiceCollection services)
         {
             services.AddScoped<IEmailService, EmailService>();
+        }
+
+        private static void AddEmail(IServiceCollection services)
+        {
+            services.AddTransient<IEmailClient, SmtpEmailClient>();
         }
 
         private static void AddScheduler(IServiceCollection services)

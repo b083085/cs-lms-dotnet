@@ -2,6 +2,7 @@
 using Capstone.LMS.Application.Dtos;
 using Capstone.LMS.Application.Dtos.User;
 using Capstone.LMS.Application.Queries.User;
+using Capstone.LMS.Domain.Constants;
 using Capstone.LMS.Domain.Shared;
 using Carter;
 using MediatR;
@@ -11,16 +12,13 @@ namespace Capstone.LMS.Presentation.Endpoints
 {
     public class UserEndpoints : BaseEndpoints, ICarterModule
     {
-        private const string _getUser = "GetUser";
-
         public void AddRoutes(IEndpointRouteBuilder app)
         {
             var user = CreateMapGroup(app, "users")
-                .RequireAuthorization()
                 .WithTags("User");
 
             user.MapGet("{userId}", GetUserAsync)
-                 .WithName(_getUser)
+                 .WithName(EndpointNames.User.GetUser)
                  .WithSummary("Gets the user details.");
 
             user.MapPost("list", GetUsersAsync)
@@ -67,7 +65,7 @@ namespace Capstone.LMS.Presentation.Endpoints
             var result = await mediator.Send(command, cancellationToken);
 
             return result.IsSuccess ?
-                TypedResults.Created(links.GetPathByName(_getUser, new { userId = result.Value.UserId }), result.Value) :
+                TypedResults.Created(links.GetPathByName(EndpointNames.User.GetUser, new { userId = result.Value.UserId }), result.Value) :
                 TypedResults.Conflict(result.Error);
         }
 

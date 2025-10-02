@@ -24,8 +24,6 @@ config.ReadFrom.Configuration(ctx.Configuration));
 
 var app = builder.Build();
 
-app.MapCarter();
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -52,6 +50,8 @@ app.UseStaticFiles();
 app.UseCors(CorsPolicy.AllowOrigin);
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.MapCarter();
 
 app.Run();
 

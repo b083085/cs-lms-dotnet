@@ -32,6 +32,10 @@ namespace Capstone.LMS.Domain.Errors
             public static readonly Error RefreshTokenIsExpired = new(
                 "RefreshToken.Expired",
                 "RefreshToken is expired.");
+
+            public static readonly Error UserAlreadyConfirmed = new(
+                "User.AlreadyConfirmed",
+                "User is already confirmed.");
         }
     }
 }

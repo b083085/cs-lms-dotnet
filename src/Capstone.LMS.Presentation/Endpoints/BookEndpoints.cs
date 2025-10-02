@@ -2,25 +2,24 @@
 using Capstone.LMS.Application.Dtos;
 using Capstone.LMS.Application.Dtos.Book;
 using Capstone.LMS.Application.Queries.Book;
+using Capstone.LMS.Domain.Constants;
 using Capstone.LMS.Domain.Shared;
 using Carter;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Capstone.LMS.Presentation.Endpoints
 {
     public class BookEndpoints : BaseEndpoints, ICarterModule
     {
-        private const string _getBook = "GetBook";
-
         public void AddRoutes(IEndpointRouteBuilder app)
         {
             var book = CreateMapGroup(app, "books")
-                .RequireAuthorization()
                 .WithTags("Book");
 
             book.MapGet("{bookId}", GetBookAsync)
-                 .WithName(_getBook)
+                 .WithName(EndpointNames.Book.GetBook)
                  .WithSummary("Gets the book details.");
 
             book.MapPost("list", GetBooksAsync)
@@ -120,7 +119,7 @@ namespace Capstone.LMS.Presentation.Endpoints
             var result = await mediator.Send(command, cancellationToken);
             
             return result.IsSuccess ?
-                TypedResults.Created(links.GetPathByName(_getBook, new { bookId = result.Value.BookId }), result.Value) :
+                TypedResults.Created(links.GetPathByName(EndpointNames.Book.GetBook, new { bookId = result.Value.BookId }), result.Value) :
                 TypedResults.Conflict(result.Error);
         }
 

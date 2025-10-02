@@ -1,0 +1,109 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Email Confirmation Failed</title>
+  <meta name="description" content="Your email confirmation could not be completed." />
+
+  <style>
+    :root{
+      --bg:#f5f7fb;
+      --card:#ffffff;
+      --accent:#dc2626; /* red */
+      --muted:#6b7280;
+      --maxw:340px;
+      --radius:12px;
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+
+    html,body{height:100%;margin:0;}
+    body{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:linear-gradient(180deg,#f7fafc,#eef2f7);
+      padding:24px;
+      color:#0f172a;
+    }
+
+    .card{
+      max-width:var(--maxw);
+      width:100%;
+      background:var(--card);
+      border-radius:var(--radius);
+      box-shadow:0 8px 30px rgba(13, 31, 54, 0.08);
+      overflow:hidden;
+      display:flex;
+      align-items:stretch;
+    }
+
+    .right{
+      background:linear-gradient(180deg, rgba(220,38,38,0.06), rgba(220,38,38,0.03));
+      display:flex;
+      padding:40px;
+      align-items:center;
+      justify-content:center;
+      min-width:260px;
+      flex:0 0 260px;
+    }
+
+    .icon {
+      width:84px;height:84px;border-radius:50%;
+      display:inline-grid;place-items:center;
+      background:linear-gradient(180deg,var(--accent),#b91c1c);
+      box-shadow:0 6px 18px rgba(220,38,38,0.18);
+    }
+
+    .icon svg{width:44px;height:44px;fill:#fff;}
+
+    h1{margin:0 0 8px 0;font-size:22px;line-height:1.12;}
+    p.lead{margin:0 0 18px 0;color:var(--muted);font-size:15px;}
+    .info{
+      background:#fff8f8;border:1px solid #fddcdc;padding:12px 14px;border-radius:8px;
+      font-size:14px;color:#0f172a;margin-top:12px;
+    }
+    .info strong{color:#b91c1c;}
+
+    .actions{margin-top:20px;display:flex;gap:10px;flex-wrap:wrap;}
+    .btn{
+      display:inline-block;padding:10px 14px;border-radius:8px;text-decoration:none;font-weight:600;
+      border:1px solid transparent;cursor:pointer;
+    }
+    .btn-primary{
+      background:linear-gradient(180deg,#dc2626,#b91c1c);
+      color:#fff;
+      box-shadow:0 6px 18px rgba(220,38,38,0.14);
+    }
+    .btn-secondary{
+      background:transparent;color:var(--muted);border:1px solid #e6eef0;
+    }
+
+    footer{margin-top:18px;font-size:13px;color:#94a3b8;}
+
+    @media (max-width:720px){
+      .card{flex-direction:column;}
+      .right{min-width:unset;flex:unset;padding:28px;}
+    }
+  </style>
+</head>
+<body>
+  <main class="card" role="main" aria-labelledby="failed-title">
+    <aside class="right">
+      <div style="text-align:center">
+        <div class="icon" aria-hidden="true">
+          <!-- cross mark -->
+          <svg viewBox="0 0 24 24" role="img" aria-hidden="true">
+            <path d="M18.3 5.71L12 12.01L5.7 5.71L4.29 7.12L10.59 13.41L4.29 19.71L5.7 21.12L12 14.83L18.3 21.12L19.71 19.71L13.41 13.41L19.71 7.12L18.3 5.71Z"/>
+          </svg>
+        </div>
+
+        <p style="margin-top:14px;font-weight:600;color:#991b1b;">Confirmation Failed</p>
+        <p style="margin:6px 0 0 0;color:var(--muted);font-size:13px;">
+          The link you used might have expired or been used already.
+        </p>
+      </div>
+    </aside>
+  </main>
+</body>
+</html>

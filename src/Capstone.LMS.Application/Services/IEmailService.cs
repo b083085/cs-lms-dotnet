@@ -1,9 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Capstone.LMS.Application.Services
 {
     public interface IEmailService
     {
-        Task SendAsync();
+        Task SendEmailConfirmationLinkAsync(Guid userId, CancellationToken cancellationToken);
     }
 }

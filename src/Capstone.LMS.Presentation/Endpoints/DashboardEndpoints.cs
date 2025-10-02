@@ -11,7 +11,6 @@ namespace Capstone.LMS.Presentation.Endpoints
         public void AddRoutes(IEndpointRouteBuilder app)
         {
             var group = CreateMapGroup(app, "dashboard")
-                .RequireAuthorization()
                 .WithTags("Dashboard");
 
             group.MapGet("{role}", GetDashboardAsync)

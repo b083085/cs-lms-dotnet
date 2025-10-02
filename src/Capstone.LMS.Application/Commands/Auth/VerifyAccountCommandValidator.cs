@@ -6,7 +6,8 @@ namespace Capstone.LMS.Application.Commands.Auth
     {
         public VerifyAccountCommandValidator()
         {
-            RuleFor(x => x.Email).NotEmpty();
+            RuleFor(x => x.UserId).NotEmpty();
+            RuleFor(x => x.Token).NotEmpty();
         }
     }
 }

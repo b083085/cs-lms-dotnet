@@ -1,15 +1,47 @@
-﻿using Capstone.LMS.Application.Dtos;
+﻿using Capstone.LMS.Domain.Errors;
+using Capstone.LMS.Domain.Extensions;
+using Capstone.LMS.Domain.Shared;
 using MediatR;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.Logging;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Capstone.LMS.Application.Commands.Auth
 {
-    public sealed class VerifyAccountCommandHandler : IRequestHandler<VerifyAccountCommand,SuccessResponseDto>
+    public sealed class VerifyAccountCommandHandler(
+        UserManager<Domain.Entities.User> userManager,
+        ILogger<VerifyAccountCommandHandler> logger
+        ) : 
+        IRequestHandler<VerifyAccountCommand, Result>
     {
-        public Task<SuccessResponseDto> Handle(VerifyAccountCommand request, CancellationToken cancellationToken)
+        private readonly UserManager<Domain.Entities.User> _userManager = userManager;
+        private readonly ILogger<VerifyAccountCommandHandler> _logger = logger;
+
+        public async Task<Result> Handle(VerifyAccountCommand request, CancellationToken cancellationToken)
         {
-            throw new System.NotImplementedException();
+            var user = await _userManager.FindByIdAsync(request.UserId.ToString());
+            if (user == null)
+            {
+                return Result.Failure(DomainErrors.Auth.UserNotFound);
+            }
+
+            if (user.EmailConfirmed)
+            {
+                return Result.Failure(DomainErrors.Auth.UserAlreadyConfirmed);
+            }
+
+            var decodedEmailConfirmationToken = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(request.Token));
+            
+            var confirmEmailResult = await _userManager.ConfirmEmailAsync(user, decodedEmailConfirmationToken);
+            if (!confirmEmailResult.Succeeded)
+            {
+                return confirmEmailResult.Failure();
+            }
+
+            return Result.Success();
         }
     }
 }

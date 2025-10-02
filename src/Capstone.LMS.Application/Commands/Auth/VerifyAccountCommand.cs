@@ -1,10 +1,10 @@
-﻿using Capstone.LMS.Application.Dtos;
-using Capstone.LMS.Application.Dtos.Auth;
-using Capstone.LMS.Domain.Shared;
+﻿using Capstone.LMS.Domain.Shared;
 using MediatR;
+using System;
 
 namespace Capstone.LMS.Application.Commands.Auth
 {
     public record VerifyAccountCommand(
-        string Email) : IRequest<SuccessResponseDto>;
+        Guid UserId,
+        string Token) : IRequest<Result>;
 }

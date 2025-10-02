@@ -24,7 +24,6 @@ namespace Capstone.LMS.Application
             services.AddMediatR(config =>
             {
                 config.RegisterServicesFromAssembly(assembly);
-                config.AddOpenBehavior(typeof(UnitOfWorkBehavior<,>));
                 config.AddOpenBehavior(typeof(ValidationBehavior<,>));
             });
             services.AddValidatorsFromAssembly(assembly);

@@ -28,7 +28,7 @@ namespace Capstone.LMS.Infrastructure.Authentication
 
             List<Claim> claims = 
             [
-                new(JwtRegisteredClaimNames.Sub, user.PublicId.ToString()),
+                new(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
                 new(JwtRegisteredClaimNames.Email, user.Email),
                 ..roles.Select(role => new Claim(ClaimTypes.Role, role))
             ];
@@ -36,7 +36,7 @@ namespace Capstone.LMS.Infrastructure.Authentication
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.UtcNow.AddMinutes(_jwtOptions.ExpiryInMinutes),
+                Expires = DateTime.UtcNow.AddMinutes(_jwtOptions.ExpirationInMinutes),
                 SigningCredentials = credentials,
                 Issuer = _jwtOptions.Issuer,
                 Audience = _jwtOptions.Audience

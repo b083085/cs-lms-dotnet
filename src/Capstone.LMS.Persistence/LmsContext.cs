@@ -53,13 +53,15 @@ namespace Capstone.LMS.Persistence
                 ctx
                 .EnsureRole(Domain.Constants.Roles.AdministratorId, Domain.Constants.Roles.Administrator)
                 .EnsureRole(Domain.Constants.Roles.LibrarianId, Domain.Constants.Roles.Librarian)
-                .EnsureRole(Domain.Constants.Roles.BorrowerId, Domain.Constants.Roles.Borrower);
+                .EnsureRole(Domain.Constants.Roles.BorrowerId, Domain.Constants.Roles.Borrower)
+                .EnsureGenres();
 
             }).UseAsyncSeeding(async (ctx, _, cancellationToken) =>
             {
                 await ctx.EnsureRoleAsync(Domain.Constants.Roles.AdministratorId, Domain.Constants.Roles.Administrator);
                 await ctx.EnsureRoleAsync(Domain.Constants.Roles.LibrarianId, Domain.Constants.Roles.Librarian);
-                await ctx.EnsureRoleAsync(Domain.Constants.Roles.BorrowerId, Domain.Constants.Roles.Borrower);    
+                await ctx.EnsureRoleAsync(Domain.Constants.Roles.BorrowerId, Domain.Constants.Roles.Borrower);
+                await ctx.EnsureGenresAsync();
             });
         }
     }

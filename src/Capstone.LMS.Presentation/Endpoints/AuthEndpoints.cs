@@ -2,6 +2,7 @@
 using Capstone.LMS.Application.Dtos;
 using Capstone.LMS.Application.Dtos.Auth;
 using Capstone.LMS.Application.Queries.Auth;
+using Capstone.LMS.Domain.Constants;
 using Capstone.LMS.Domain.Shared;
 using Carter;
 using MediatR;
@@ -14,8 +15,7 @@ namespace Capstone.LMS.Presentation.Endpoints
         public void AddRoutes(IEndpointRouteBuilder app)
         {
             var auth = CreateMapGroup(app, "auth")
-                .WithTags("Auth")
-                .RequireAuthorization();
+                .WithTags("Auth");
 
             auth.MapPost("login", LoginAsync)
                  .WithSummary("Authenticate user.")
@@ -28,7 +28,8 @@ namespace Capstone.LMS.Presentation.Endpoints
                  .WithSummary("Register a new user.")
                  .AllowAnonymous();
 
-            auth.MapPost("verify", VerifyAccountAsync)
+            auth.MapGet("verify", VerifyAccountAsync)
+                 .WithName(EndpointNames.Auth.Verify)
                  .WithSummary("Verifies the user account.")
                  .AllowAnonymous();
 
@@ -73,14 +74,17 @@ namespace Capstone.LMS.Presentation.Endpoints
                 TypedResults.Conflict(result.Error);
         }
 
-        private static async Task<Ok<SuccessResponseDto>> VerifyAccountAsync(
+        private static async Task<RedirectHttpResult> VerifyAccountAsync(
             IMediator mediator,
-            VerifyAccountCommand command,
+            Guid userId,
+            string token,
             CancellationToken cancellationToken)
         {
-            var result = await mediator.Send(command, cancellationToken);
+            var result = await mediator.Send(new VerifyAccountCommand(userId, token), cancellationToken);
 
-            return TypedResults.Ok(result);
+            return result.IsSuccess ?
+                TypedResults.Redirect("/templates/verify-email/SuccessEmailConfirmationLink.html") :
+                TypedResults.Redirect("/templates/verify-email/FailureEmailConfirmationLink.html");
         }
 
         private static async Task<Results<Ok<GetRefreshTokenResponseDto>, BadRequest<Error>>> GetRefreshTokenAsync(
