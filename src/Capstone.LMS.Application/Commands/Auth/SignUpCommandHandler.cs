@@ -4,6 +4,7 @@ using Capstone.LMS.Domain.Shared;
 using Capstone.LMS.Domain.ValueObjects;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,10 +12,12 @@ using System.Threading.Tasks;
 namespace Capstone.LMS.Application.Commands.Auth
 {
     public sealed class SignUpCommandHandler(
-        UserManager<Domain.Entities.User> userManager)
+        UserManager<Domain.Entities.User> userManager,
+        ILogger<SignUpCommandHandler> logger)
         : IRequestHandler<SignUpCommand, Result>
     {
         private readonly UserManager<Domain.Entities.User> _userManager = userManager;
+        private readonly ILogger<SignUpCommandHandler> _logger = logger;
 
         public async Task<Result> Handle(SignUpCommand request, CancellationToken cancellationToken)
         {
@@ -36,6 +39,8 @@ namespace Capstone.LMS.Application.Commands.Auth
             {
                 return createUserResult.Failure();
             }
+
+            _logger.LogInformation("User is created. {@User}", user);
 
             var addUserRoleResult = await _userManager.AddToRoleAsync(user, Roles.Borrower);
             if (!addUserRoleResult.Succeeded)
