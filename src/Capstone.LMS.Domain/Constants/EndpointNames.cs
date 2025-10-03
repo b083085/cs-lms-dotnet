@@ -16,5 +16,10 @@
         {
             public static readonly string GetBook = "GetBook";
         }
+
+        public static class Genre
+        {
+            public static readonly string GetGenre = "GetGenre";
+        }
     }
 }

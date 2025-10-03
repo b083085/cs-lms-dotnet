@@ -1,15 +1,36 @@
-﻿using Capstone.LMS.Application.Dtos;
+﻿using Capstone.LMS.Application.Persistence;
+using Capstone.LMS.Domain.Errors;
+using Capstone.LMS.Domain.Repositories;
+using Capstone.LMS.Domain.Shared;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Capstone.LMS.Application.Commands.Genre
 {
-    public sealed class DeleteGenreCommandHandler : IRequestHandler<DeleteGenreCommand, SuccessResponseDto>
+    public sealed class DeleteGenreCommandHandler(
+        IGenreRepository genreRepository,
+        IUnitOfWork unitOfWork,
+        ILogger<DeleteGenreCommandHandler> logger) : IRequestHandler<DeleteGenreCommand, Result>
     {
-        public Task<SuccessResponseDto> Handle(DeleteGenreCommand request, CancellationToken cancellationToken)
+        private readonly IGenreRepository _genreRepository = genreRepository;
+        private readonly IUnitOfWork _unitOfWork = unitOfWork;
+        private readonly ILogger<DeleteGenreCommandHandler> _logger = logger;
+
+        public async Task<Result> Handle(DeleteGenreCommand request, CancellationToken cancellationToken)
         {
-            throw new System.NotImplementedException();
+            var genre = await _genreRepository.GetAsync(g => g.Id == request.GenreId, cancellationToken);
+            if (genre == null)
+            {
+                return Result.Failure(DomainErrors.Genre.GenreNotFound);
+            }
+
+            _genreRepository.Delete(genre);
+
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            return Result.Success();
         }
     }
 }

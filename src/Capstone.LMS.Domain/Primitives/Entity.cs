@@ -2,7 +2,7 @@
 
 namespace Capstone.LMS.Domain.Primitives
 {
-    public abstract class Entity : IEquatable<Entity>, IAudit
+    public abstract class Entity : IEquatable<Entity>, IAudit, IPublicId
     {
         protected Entity() 
         { 
@@ -93,7 +93,7 @@ namespace Capstone.LMS.Domain.Primitives
             return Id.GetHashCode();
         }
 
-        public void GeneratePublicId() =>
+        public void SetPublicId() =>
             PublicId = Guid.NewGuid();
     }
 }

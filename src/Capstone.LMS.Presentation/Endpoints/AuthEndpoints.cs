@@ -3,10 +3,12 @@ using Capstone.LMS.Application.Dtos;
 using Capstone.LMS.Application.Dtos.Auth;
 using Capstone.LMS.Application.Queries.Auth;
 using Capstone.LMS.Domain.Constants;
+using Capstone.LMS.Domain.Entities;
 using Capstone.LMS.Domain.Shared;
 using Carter;
 using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Identity;
 
 namespace Capstone.LMS.Presentation.Endpoints
 {
@@ -52,14 +54,14 @@ namespace Capstone.LMS.Presentation.Endpoints
                 TypedResults.Unauthorized();
         }
 
-        private static async Task<Ok<SuccessResponseDto>> LogoutAsync(
+        private static async Task<Ok> LogoutAsync(
             IMediator mediator,
-            LogoutCommand command,
+            SignInManager<User> signInManager,
             CancellationToken cancellationToken)
         {
-            var result = await mediator.Send(command, cancellationToken);
+            await signInManager.SignOutAsync();
 
-            return TypedResults.Ok(result);
+            return TypedResults.Ok();
         }
 
         private static async Task<Results<Ok, Conflict<Error>>> SignUpAsync(

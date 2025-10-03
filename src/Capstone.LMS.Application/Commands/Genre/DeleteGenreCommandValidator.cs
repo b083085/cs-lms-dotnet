@@ -6,7 +6,7 @@ namespace Capstone.LMS.Application.Commands.Genre
     {
         public DeleteGenreCommandValidator()
         {
-            RuleFor(x => x.BookId).NotEmpty();
+            RuleFor(x => x.GenreId).NotEmpty();
         }
     }
 }

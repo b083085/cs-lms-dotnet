@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace Capstone.LMS.Domain.Entities
 {
-    public class User : IdentityUser<Guid>, IAudit, IAggregateRoot
+    public class User : IdentityUser<Guid>, IAudit, IAggregateRoot, IPublicId
     {
         private readonly List<IDomainEvent> _domainEvents = [];
         private List<BorrowedBook> _borrowedBooks = [];
@@ -114,7 +114,7 @@ namespace Capstone.LMS.Domain.Entities
             DeletedOnUtc = DateTime.UtcNow;
         }
 
-        public void GeneratePublicId() => PublicId = Guid.NewGuid();
+        public void SetPublicId() => PublicId = Guid.NewGuid();
 
         protected void RaiseDomainEvent(IDomainEvent domainEvent) => _domainEvents.Add(domainEvent);
 

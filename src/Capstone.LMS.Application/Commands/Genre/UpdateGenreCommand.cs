@@ -6,12 +6,6 @@ using System;
 namespace Capstone.LMS.Application.Commands.Genre
 {
     public record UpdateGenreCommand(
-        Guid BookId,
-        string Title,
-        string Summary,
-        string Isbn,
-        DateTime PublishedOn,
-        int TotalCopies,
         Guid GenreId,
-        Guid AuthorId) : IRequest<Result<UpdateGenreResponseDto>>;
+        string Name) : IRequest<Result>;
 }

@@ -6,7 +6,7 @@ namespace Capstone.LMS.Application.Queries.Genre
     {
         public GetGenreQueryValidator()
         {
-            RuleFor(x => x.BookId).NotEmpty();
+            RuleFor(x => x.GenreId).NotEmpty();
         }
     }
 }

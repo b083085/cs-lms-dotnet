@@ -29,9 +29,18 @@ namespace Capstone.LMS.Domain.Entities
             Guid id,
             string name)
         {
-            return new(
+            var genre = new Genre(
                 id,
                 name);
+
+            genre.Created(Guid.Empty);
+
+            return genre;
+        }
+
+        public void SetName(string name)
+        {
+            Name = name;
         }
     }
 }

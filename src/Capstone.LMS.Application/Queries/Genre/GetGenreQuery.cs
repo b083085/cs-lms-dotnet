@@ -6,5 +6,5 @@ using System;
 namespace Capstone.LMS.Application.Queries.Genre
 {
     public record GetGenreQuery(
-        Guid BookId) : IRequest<Result<GetGenreResponseDto>>;
+        Guid GenreId) : IRequest<Result<GetGenreResponseDto>>;
 }

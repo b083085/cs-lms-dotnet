@@ -11,5 +11,6 @@ namespace Capstone.LMS.Application.Persistence
         DbSet<Permission> Permissions { get; }
         DbSet<SubPermission> SubPermissions { get; }
         DbSet<RefreshToken> RefreshTokens { get; }
+        DbSet<Genre> Genres { get; }
     }
 }

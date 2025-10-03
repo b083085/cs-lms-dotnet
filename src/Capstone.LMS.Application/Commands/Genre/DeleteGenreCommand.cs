@@ -1,9 +1,9 @@
-﻿using Capstone.LMS.Application.Dtos;
+﻿using Capstone.LMS.Domain.Shared;
 using MediatR;
 using System;
 
 namespace Capstone.LMS.Application.Commands.Genre
 {
     public record DeleteGenreCommand(
-        Guid BookId) : IRequest<SuccessResponseDto>;
+        Guid GenreId) : IRequest<Result>;
 }

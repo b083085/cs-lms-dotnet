@@ -1,16 +1,38 @@
-﻿using Capstone.LMS.Application.Dtos.Genre;
+﻿using Capstone.LMS.Application.Persistence;
+using Capstone.LMS.Domain.Errors;
+using Capstone.LMS.Domain.Repositories;
 using Capstone.LMS.Domain.Shared;
 using MediatR;
+using Microsoft.Extensions.Logging;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Capstone.LMS.Application.Commands.Genre
 {
-    public sealed class UpdateGenreCommandHandler : IRequestHandler<UpdateGenreCommand, Result<UpdateGenreResponseDto>>
+    public sealed class UpdateGenreCommandHandler(
+        IGenreRepository genreRepository,
+        IUnitOfWork unitOfWork,
+        ILogger<UpdateGenreCommandHandler> logger
+        ) : IRequestHandler<UpdateGenreCommand, Result>
     {
-        public Task<Result<UpdateGenreResponseDto>> Handle(UpdateGenreCommand request, CancellationToken cancellationToken)
+        private readonly IGenreRepository _genreRepository = genreRepository;
+        private readonly IUnitOfWork _unitOfWork = unitOfWork;
+        private readonly ILogger<UpdateGenreCommandHandler> _logger = logger;
+
+        public async Task<Result> Handle(UpdateGenreCommand request, CancellationToken cancellationToken)
         {
-            throw new System.NotImplementedException();
+            var genre = await _genreRepository.GetAsync(g => g.Id == request.GenreId, cancellationToken);
+            if (genre == null)
+            {
+                return Result.Failure(DomainErrors.Genre.GenreNotFound);
+            }
+
+            genre.SetName(request.Name);
+
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            return Result.Success();
         }
     }
 }

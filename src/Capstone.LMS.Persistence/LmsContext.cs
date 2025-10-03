@@ -17,6 +17,7 @@ namespace Capstone.LMS.Persistence
         public DbSet<Permission> Permissions { get; set; }
         public DbSet<SubPermission> SubPermissions { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
+        public DbSet<Genre> Genres { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

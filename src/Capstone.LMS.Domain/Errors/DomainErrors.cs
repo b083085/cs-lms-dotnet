@@ -37,5 +37,16 @@ namespace Capstone.LMS.Domain.Errors
                 "User.AlreadyConfirmed",
                 "User is already confirmed.");
         }
+
+        public static class Genre
+        {
+            public static readonly Error GenreAlreadyExist = new(
+                "Genre.AlreadyExist",
+                "Genre already exist.");
+
+            public static readonly Error GenreNotFound = new(
+                "Genre.NotFound",
+                "Genre not found.");
+        }
     }
 }
