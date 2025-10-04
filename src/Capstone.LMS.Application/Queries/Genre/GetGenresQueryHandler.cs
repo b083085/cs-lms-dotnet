@@ -1,8 +1,10 @@
 ﻿using Capstone.LMS.Application.Dtos.Genre;
 using Capstone.LMS.Domain.Repositories;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -18,16 +20,18 @@ namespace Capstone.LMS.Application.Queries.Genre
 
         public async Task<IEnumerable<GetGenreResponseDto>> Handle(GetGenresQuery request, CancellationToken cancellationToken)
         {
-            return await _genreRepository.GetAllAsync(
-                predicate: null,
-                sort: g => g.Name,
-                noTracking: true,
-                transform: g => new GetGenreResponseDto
+            var query = _genreRepository.GetQueryable();
+
+            var genres = await query
+                .Select(p => new GetGenreResponseDto
                 {
-                    GenreId = g.Id,
-                    Name = g.Name
-                },
-                cancellationToken: cancellationToken);
+                    GenreId = p.Id,
+                    Name = p.Name
+                })
+                .OrderBy(p => p.Name)
+                .ToListAsync(cancellationToken);
+
+            return genres;
         }
     }
 }

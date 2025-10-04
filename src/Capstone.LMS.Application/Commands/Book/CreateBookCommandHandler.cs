@@ -69,6 +69,7 @@ namespace Capstone.LMS.Application.Commands.Book
                 Isbn = book.Isbn,
                 PublishedOn = book.PublishedOn,
                 TotalCopies = book.TotalCopies,
+                Availability = book.Availability,
                 Genre = new Dtos.Genre.GetGenreResponseDto
                 {
                     GenreId = genre.Id,

@@ -1,8 +1,10 @@
 ﻿using Capstone.LMS.Application.Dtos.Author;
 using Capstone.LMS.Domain.Repositories;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -18,16 +20,18 @@ namespace Capstone.LMS.Application.Queries.Author
 
         public async Task<IEnumerable<GetAuthorResponseDto>> Handle(GetAuthorsQuery request, CancellationToken cancellationToken)
         {
-            return await _authorRepository.GetAllAsync(
-                predicate: null,
-                sort: a => a.Name,
-                noTracking: true,
-                transform: a => new GetAuthorResponseDto
+            var query = _authorRepository.GetQueryable();
+
+            var authors = await query
+                .Select(p => new GetAuthorResponseDto
                 {
-                    AuthorId = a.Id,
-                    Name = a.Name
-                },
-                cancellationToken: cancellationToken);
+                    AuthorId = p.Id,
+                    Name = p.Name
+                })
+                .OrderBy(p => p.Name)
+                .ToListAsync(cancellationToken);
+
+            return authors;
         }
     }
 }

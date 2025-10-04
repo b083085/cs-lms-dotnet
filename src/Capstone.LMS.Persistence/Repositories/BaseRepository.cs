@@ -1,5 +1,4 @@
-﻿using Capstone.LMS.Domain.Primitives;
-using Capstone.LMS.Domain.Repositories;
+﻿using Capstone.LMS.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
@@ -19,61 +18,14 @@ namespace Capstone.LMS.Persistence.Repositories
             return await Context.Set<T>().FirstOrDefaultAsync(predicate, cancellationToken);
         }
 
-        public async Task<IEnumerable<T>> GetAllAsync(
-            Expression<Func<T, bool>> predicate, 
-            Expression<Func<T, object>> sort, 
-            bool noTracking = false, 
-            int? skip = null, 
-            int? take = null, 
-            CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default)
         {
-            return await GetAllAsync(
-                predicate,
-                sort,
-                t => t,
-                noTracking,
-                skip,
-                take,
-                cancellationToken);
+            return await Context.Set<T>().Where(predicate).ToListAsync(cancellationToken);
         }
 
-        public async Task<IEnumerable<U>> GetAllAsync<U>(
-            Expression<Func<T, bool>> predicate, 
-            Expression<Func<T, object>> sort, 
-            Func<T, U> transform = null, 
-            bool noTracking = false, 
-            int? skip = null, 
-            int? take = null, 
-            CancellationToken cancellationToken = default)
+        public IQueryable<T> GetQueryable()
         {
-            var query = Context.Set<T>().AsQueryable();
-
-            if (predicate != null)
-            {
-                query = query.Where(predicate);
-            }
-
-            if (noTracking)
-            {
-                query = query.AsNoTracking();
-            }
-
-            if (sort != null)
-            {
-                query = query.OrderBy(sort);
-            }
-
-            if (skip != null && take != null)
-            {
-                query = query
-                    .Skip(skip.Value)
-                    .Take(take.Value);
-            }
-
-            return await query
-                .OrderBy(sort)
-                .Select(g => transform.Invoke(g))
-                .ToListAsync(cancellationToken);
+            return Context.Set<T>().AsQueryable();
         }
     }
 }

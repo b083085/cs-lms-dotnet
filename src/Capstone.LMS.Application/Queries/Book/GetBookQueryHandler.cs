@@ -33,6 +33,7 @@ namespace Capstone.LMS.Application.Queries.Book
                 Isbn = book.Isbn,
                 PublishedOn = book.PublishedOn,
                 TotalCopies = book.TotalCopies,
+                Availability = book.Availability,
                 Genre = book.Genre is null ? null : new Dtos.Genre.GetGenreResponseDto
                 {
                     GenreId = book.Genre.Id,

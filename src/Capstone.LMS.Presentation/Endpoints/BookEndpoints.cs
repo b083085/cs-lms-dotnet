@@ -48,9 +48,10 @@ namespace Capstone.LMS.Presentation.Endpoints
 
         private static async Task<Ok<ListResponseDto<GetBookResponseDto>>> GetBooksAsync(
             IMediator mediator,
+            [AsParameters]GetBooksQuery query,
             CancellationToken cancellationToken)
         {
-            var result = await mediator.Send(new GetBooksQuery("",null,null), cancellationToken);
+            var result = await mediator.Send(query, cancellationToken);
 
             return TypedResults.Ok(result);
         }

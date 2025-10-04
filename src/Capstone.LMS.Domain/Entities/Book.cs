@@ -1,4 +1,6 @@
-﻿using Capstone.LMS.Domain.Primitives;
+﻿using Capstone.LMS.Domain.DomainEvents;
+using Capstone.LMS.Domain.Enums;
+using Capstone.LMS.Domain.Primitives;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -23,7 +25,8 @@ namespace Capstone.LMS.Domain.Entities
             DateTime publishedOn,
             int totalCopies,
             Genre genre,
-            Author author)
+            Author author,
+            Availability availability)
             : base(id)
         {
             Title = title;
@@ -33,6 +36,7 @@ namespace Capstone.LMS.Domain.Entities
             TotalCopies = totalCopies;
             GenreId = genre.Id;
             AuthorId = author.Id;
+            Availability = availability;
         }
 
         public string Title { get; private set; }
@@ -42,10 +46,7 @@ namespace Capstone.LMS.Domain.Entities
         public Guid GenreId { get; private set; }
         public int TotalCopies { get; private set; }
         public Guid AuthorId { get; private set; }
-
-        [NotMapped]
-        public bool IsAvailable => TotalCopies > _borrowedBooks.Count(p => p.Status == Enums.BorrowedStatus.Borrowed);
-
+        public Availability Availability { get; private set; }
         public Author Author { get; private set; }
         public Genre Genre { get; private set; }
 
@@ -56,6 +57,8 @@ namespace Capstone.LMS.Domain.Entities
         public void SetIsbn(string isbn) => Isbn = isbn;    
         public void SetPublishedOn(DateTime publishedOn) => PublishedOn = publishedOn;
         public void SetTotalCopies(int totalCopies) => TotalCopies = totalCopies;
+        public void SetAvailability(Availability availability) => Availability = availability;
+
         public void SetGenre(Genre genre)
         {
             if(genre.Id != GenreId)
@@ -69,6 +72,12 @@ namespace Capstone.LMS.Domain.Entities
             {
                 AuthorId = author.Id;
             }
+        }
+        public void UpdateAvailability()
+        {
+            Availability = TotalCopies > _borrowedBooks.Count(p => p.Status == Enums.BorrowedStatus.Borrowed) ?
+                Availability.Available :
+                Availability.Unavailable;
         }
 
         public BorrowedBook Borrow(User user)
@@ -85,9 +94,10 @@ namespace Capstone.LMS.Domain.Entities
 
             _borrowedBooks.Add(borrowedBook);
 
+            RaiseDomainEvent(new BorrowedBookDomainEvent(Id));
+
             return borrowedBook;
         }
-
 
         public static Book Create(
             Guid id,
@@ -107,7 +117,8 @@ namespace Capstone.LMS.Domain.Entities
                 publishedOn,
                 totalCopies,
                 genre,
-                author);
+                author,
+                totalCopies > 0 ? Availability.Available : Availability.Unavailable);
 
             return book;
         }
