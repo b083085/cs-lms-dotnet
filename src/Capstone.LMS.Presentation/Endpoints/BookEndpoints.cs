@@ -68,17 +68,19 @@ namespace Capstone.LMS.Presentation.Endpoints
                 TypedResults.Conflict(result.Error);
         }
 
-        private static async Task<Ok<SuccessResponseDto>> DeleteBookAsync(
+        private static async Task<Results<Ok, BadRequest<Error>>> DeleteBookAsync(
             IMediator mediator,
             Guid bookId,
             CancellationToken cancellationToken)
         {
             var result = await mediator.Send(new DeleteBookCommand(bookId), cancellationToken);
 
-            return TypedResults.Ok(result);
+            return result.IsSuccess ?
+                TypedResults.Ok() :
+                TypedResults.BadRequest(result.Error);
         }
 
-        private static async Task<Results<Ok<UpdateBookResponseDto>, BadRequest<Error>>> UpdateBookAsync(
+        private static async Task<Results<Ok, BadRequest<Error>>> UpdateBookAsync(
             IMediator mediator,
             UpdateBookCommand command,
             CancellationToken cancellationToken)
@@ -86,7 +88,7 @@ namespace Capstone.LMS.Presentation.Endpoints
             var result = await mediator.Send(command, cancellationToken);
 
             return result.IsSuccess ?
-                TypedResults.Ok(result.Value) :
+                TypedResults.Ok() :
                 TypedResults.BadRequest(result.Error);
         }
     }

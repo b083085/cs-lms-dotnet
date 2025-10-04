@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using System.Security.Cryptography;
 
 namespace Capstone.LMS.Domain.Entities
 {
@@ -30,9 +31,8 @@ namespace Capstone.LMS.Domain.Entities
             Isbn = isbn;
             PublishedOn = publishedOn;
             TotalCopies = totalCopies;
-            
-            AddGenre(genre);
-            AddAuthor(author);
+            GenreId = genre.Id;
+            AuthorId = author.Id;
         }
 
         public string Title { get; private set; }
@@ -51,6 +51,26 @@ namespace Capstone.LMS.Domain.Entities
 
         public IReadOnlyList<BorrowedBook> BorrowedBooks => [.. _borrowedBooks];
 
+        public void SetTitle(string title) => Title = title;
+        public void SetSummary(string summary) => Summary = summary;
+        public void SetIsbn(string isbn) => Isbn = isbn;    
+        public void SetPublishedOn(DateTime publishedOn) => PublishedOn = publishedOn;
+        public void SetTotalCopies(int totalCopies) => TotalCopies = totalCopies;
+        public void SetGenre(Genre genre)
+        {
+            if(genre.Id != GenreId)
+            {
+                GenreId = genre.Id;
+            }
+        }
+        public void SetAuthor(Author author)
+        {
+            if(author.Id != AuthorId)
+            {
+                AuthorId = author.Id;
+            }
+        }
+
         public BorrowedBook Borrow(User user)
         {
             var borrowedBook = BorrowedBook.Create(
@@ -68,15 +88,6 @@ namespace Capstone.LMS.Domain.Entities
             return borrowedBook;
         }
 
-        public void AddAuthor(Author author)
-        {
-            AuthorId = author.Id;
-        }
-
-        public void AddGenre(Genre genre)
-        {
-            GenreId = genre.Id;
-        }
 
         public static Book Create(
             Guid id,

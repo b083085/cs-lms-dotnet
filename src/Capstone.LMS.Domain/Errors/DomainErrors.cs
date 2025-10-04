@@ -59,5 +59,16 @@ namespace Capstone.LMS.Domain.Errors
                 "Author.NotFound",
                 "Author not found.");
         }
+
+        public static class Book
+        {
+            public static readonly Error BookAlreadyExist = new(
+                "Book.AlreadyExist",
+                "Book already exist.");
+
+            public static readonly Error BookNotFound = new(
+                "Book.NotFound",
+                "Book not found.");
+        }
     }
 }

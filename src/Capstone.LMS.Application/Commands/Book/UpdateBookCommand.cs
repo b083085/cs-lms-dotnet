@@ -1,5 +1,4 @@
-﻿using Capstone.LMS.Application.Dtos.Book;
-using Capstone.LMS.Domain.Shared;
+﻿using Capstone.LMS.Domain.Shared;
 using MediatR;
 using System;
 
@@ -13,5 +12,5 @@ namespace Capstone.LMS.Application.Commands.Book
         DateTime PublishedOn,
         int TotalCopies,
         Guid GenreId,
-        Guid AuthorId) : IRequest<Result<UpdateBookResponseDto>>;
+        Guid AuthorId) : IRequest<Result>;
 }

@@ -1,9 +1,9 @@
-﻿using Capstone.LMS.Application.Dtos;
+﻿using Capstone.LMS.Domain.Shared;
 using MediatR;
 using System;
 
 namespace Capstone.LMS.Application.Commands.Book
 {
     public record DeleteBookCommand(
-        Guid BookId) : IRequest<SuccessResponseDto>;
+        Guid BookId) : IRequest<Result>;
 }
