@@ -1,9 +1,5 @@
-﻿using Capstone.LMS.Application.Commands.Book;
-using Capstone.LMS.Application.Commands.Genre;
-using Capstone.LMS.Application.Dtos;
-using Capstone.LMS.Application.Dtos.Book;
+﻿using Capstone.LMS.Application.Commands.Genre;
 using Capstone.LMS.Application.Dtos.Genre;
-using Capstone.LMS.Application.Queries.Book;
 using Capstone.LMS.Application.Queries.Genre;
 using Capstone.LMS.Domain.Constants;
 using Capstone.LMS.Domain.Shared;
@@ -20,7 +16,7 @@ namespace Capstone.LMS.Presentation.Endpoints
             var genre = CreateMapGroup(app, "genres")
                 .WithTags("Genre");
 
-            genre.MapGet("{genreId}", GetGenreAsync)
+            genre.MapGet("{genreId:guid}", GetGenreAsync)
                  .WithName(EndpointNames.Genre.GetGenre)
                  .WithSummary("Gets the genre details.");
 
@@ -30,7 +26,7 @@ namespace Capstone.LMS.Presentation.Endpoints
             genre.MapPost("", CreateGenreAsync)
                  .WithSummary("Creates a genre.");
 
-            genre.MapDelete("{genreId}", DeleteGenreAsync)
+            genre.MapDelete("{genreId:guid}", DeleteGenreAsync)
                  .WithSummary("Deletes the genre.");
 
             genre.MapPut("", UpdateGenreAsync)

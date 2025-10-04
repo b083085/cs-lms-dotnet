@@ -1,4 +1,5 @@
-﻿using Capstone.LMS.Domain.Repositories;
+﻿using Capstone.LMS.Domain.Primitives;
+using Capstone.LMS.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
@@ -11,11 +12,6 @@ namespace Capstone.LMS.Persistence.Repositories
         public async Task CreateAsync(T entity, CancellationToken cancellationToken)
         {
             await Context.Set<T>().AddAsync(entity, cancellationToken);
-        }
-
-        public void Delete(T entity)
-        {
-            Context.Set<T>().Remove(entity);
         }
 
         public async Task<T> GetAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken)

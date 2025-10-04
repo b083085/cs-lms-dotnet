@@ -33,6 +33,5 @@ namespace Capstone.LMS.Domain.Repositories
             Expression<Func<T, bool>> predicate, 
             CancellationToken cancellationToken);
 
-        void Delete(T entity);
     }
 }

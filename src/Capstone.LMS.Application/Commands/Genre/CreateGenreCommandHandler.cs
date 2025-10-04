@@ -34,6 +34,8 @@ namespace Capstone.LMS.Application.Commands.Genre
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
+            _logger.LogInformation("Genre is created. {Genre}", genre.Name);
+
             return new CreateGenreResponseDto
             {
                 GenreId = genre.Id,

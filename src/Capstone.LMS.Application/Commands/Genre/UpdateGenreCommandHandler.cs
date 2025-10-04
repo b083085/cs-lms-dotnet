@@ -32,6 +32,8 @@ namespace Capstone.LMS.Application.Commands.Genre
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
+            _logger.LogInformation("Genre is updated. {Genre}", genre.Name);
+
             return Result.Success();
         }
     }

@@ -21,5 +21,11 @@
         {
             public static readonly string GetGenre = "GetGenre";
         }
+        
+
+        public static class Author
+        {
+            public static readonly string GetAuthor = "GetAuthor";
+        }
     }
 }

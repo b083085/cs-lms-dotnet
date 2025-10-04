@@ -24,6 +24,8 @@ namespace Capstone.LMS.Domain.Entities
 
         public IReadOnlyList<Book> Books => [.. _books];
 
+        public void SetName(string name) => Name = name;
+
         public static Author Create(
             Guid id,
             string name)
