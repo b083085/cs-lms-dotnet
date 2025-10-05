@@ -30,19 +30,19 @@ namespace Capstone.LMS.Application.Commands.Book
             var book = await _bookRepository.GetAsync(b => b.Title.ToLower() == request.Title.ToLower(), cancellationToken);
             if (book is not null)
             {
-                return Result.Failure<CreateBookResponseDto>(DomainErrors.Book.BookAlreadyExist);
+                return Result.Failure<CreateBookResponseDto>(DomainErrors.Book.AlreadyExist);
             }
 
             var genre = await _genreRepository.GetAsync(g => g.Id == request.GenreId, cancellationToken);
             if (genre is null)
             {
-                return Result.Failure<CreateBookResponseDto>(DomainErrors.Genre.GenreNotFound);
+                return Result.Failure<CreateBookResponseDto>(DomainErrors.Genre.NotFound);
             }
 
             var author = await _authorRepository.GetAsync(a => a.Id ==  request.AuthorId, cancellationToken);   
             if(author is null)
             {
-                return Result.Failure<CreateBookResponseDto>(DomainErrors.Author.AuthorNotFound);
+                return Result.Failure<CreateBookResponseDto>(DomainErrors.Author.NotFound);
             }
 
             book = Domain.Entities.Book.Create(

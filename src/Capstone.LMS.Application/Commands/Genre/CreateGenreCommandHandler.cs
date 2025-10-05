@@ -25,7 +25,7 @@ namespace Capstone.LMS.Application.Commands.Genre
             var genre = await _genreRepository.GetAsync(g => g.Name.ToLower() == request.Name.ToLower(), cancellationToken);
             if(genre is not null)
             {
-                return Result.Failure<CreateGenreResponseDto>(DomainErrors.Genre.GenreAlreadyExist);
+                return Result.Failure<CreateGenreResponseDto>(DomainErrors.Genre.AlreadyExist);
             }
 
             genre = Domain.Entities.Genre.Create(Guid.NewGuid(), request.Name);

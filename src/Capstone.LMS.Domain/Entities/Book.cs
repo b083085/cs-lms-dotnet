@@ -1,11 +1,8 @@
-﻿using Capstone.LMS.Domain.DomainEvents;
-using Capstone.LMS.Domain.Enums;
+﻿using Capstone.LMS.Domain.Enums;
 using Capstone.LMS.Domain.Primitives;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
-using System.Security.Cryptography;
 
 namespace Capstone.LMS.Domain.Entities
 {
@@ -75,17 +72,20 @@ namespace Capstone.LMS.Domain.Entities
         }
         public void UpdateAvailability()
         {
-            Availability = TotalCopies > _borrowedBooks.Count(p => p.Status == Enums.BorrowedStatus.Borrowed) ?
+            Availability = IsAvailable() ?
                 Availability.Available :
                 Availability.Unavailable;
         }
+        public bool IsAvailable() => TotalCopies > _borrowedBooks.Count(p => p.Status == Enums.BorrowedStatus.Borrowed);
 
-        public BorrowedBook Borrow(User user)
+        public BorrowedBook Request(User user)
         {
+            // this serves as a request to borrow the book.
+            // if librarian approves the request, the issued and due are updated.
             var borrowedBook = BorrowedBook.Create(
                 Guid.NewGuid(), 
-                this, 
-                user, 
+                this.Id, 
+                user.Id, 
                 null, 
                 null, 
                 null, 
@@ -93,8 +93,6 @@ namespace Capstone.LMS.Domain.Entities
                 string.Empty);
 
             _borrowedBooks.Add(borrowedBook);
-
-            RaiseDomainEvent(new BorrowedBookDomainEvent(Id));
 
             return borrowedBook;
         }

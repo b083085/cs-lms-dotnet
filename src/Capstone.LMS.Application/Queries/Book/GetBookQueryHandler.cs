@@ -70,7 +70,7 @@ namespace Capstone.LMS.Application.Queries.Book
 
             if(book is null)
             {
-                return Result.Failure<GetBookResponseDto>(DomainErrors.Book.BookNotFound);
+                return Result.Failure<GetBookResponseDto>(DomainErrors.Book.NotFound);
             }
 
             return book;

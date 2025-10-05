@@ -1,6 +1,8 @@
-﻿namespace Capstone.LMS.Domain.Repositories
+﻿using Capstone.LMS.Domain.Entities;
+
+namespace Capstone.LMS.Domain.Repositories
 {
-    public interface IBorrowedBookRepository
+    public interface IBorrowedBookRepository : IBaseRepository<BorrowedBook>
     {
     }
 }

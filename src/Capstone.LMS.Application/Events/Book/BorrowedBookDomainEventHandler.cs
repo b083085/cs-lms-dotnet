@@ -21,7 +21,7 @@ namespace Capstone.LMS.Application.Events.Book
 
         public async Task Handle(BorrowedBookDomainEvent notification, CancellationToken cancellationToken)
         {
-            var book = await _bookRepository.GetByIdAsync(notification.BookId, cancellationToken);
+            var book = await _bookRepository.GetAsync(b => b.Id == notification.BookId, cancellationToken);
             if (book is null)
             {
                 throw new BookNotFoundException(notification.BookId);

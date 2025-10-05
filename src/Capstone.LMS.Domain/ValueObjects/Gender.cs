@@ -20,18 +20,18 @@ namespace Capstone.LMS.Domain.ValueObjects
         {
             if (string.IsNullOrWhiteSpace(gender))
             {
-                return Result.Failure<Gender>(DomainErrors.User.GenderIsEmpty);
+                return Result.Failure<Gender>(DomainErrors.Gender.IsEmpty);
             }
 
             if (gender.Length > MaxLength)
             {
-                return Result.Failure<Gender>(DomainErrors.User.GenderIsTooLong);
+                return Result.Failure<Gender>(DomainErrors.Gender.IsTooLong);
             }
 
             var genderLowerCase = gender.ToLower();
             if(genderLowerCase != "m" && genderLowerCase != "f")
             {
-                return Result.Failure<Gender>(DomainErrors.User.GenderIsUnknown);
+                return Result.Failure<Gender>(DomainErrors.Gender.IsUnknown);
             }
 
             return new Gender(gender.ToUpper());

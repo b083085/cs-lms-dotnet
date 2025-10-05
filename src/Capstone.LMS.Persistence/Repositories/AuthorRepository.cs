@@ -3,11 +3,7 @@ using Capstone.LMS.Domain.Repositories;
 
 namespace Capstone.LMS.Persistence.Repositories
 {
-    internal sealed class AuthorRepository : BaseRepository<Author>, IAuthorRepository
+    internal sealed class AuthorRepository(LmsContext context) : BaseRepository<Author>(context), IAuthorRepository
     {
-        public AuthorRepository(LmsContext context)
-            : base(context)
-        {
-        }
     }
 }

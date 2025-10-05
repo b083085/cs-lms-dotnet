@@ -28,7 +28,7 @@ namespace Capstone.LMS.Application.Commands.Book
             var book = await _bookRepository.GetAsync(g => g.Id == request.BookId, cancellationToken);
             if(book is null)
             {
-                return Result.Failure(DomainErrors.Book.BookNotFound);
+                return Result.Failure(DomainErrors.Book.NotFound);
             }
 
             book.Deleted(_httpContextAccessor.GetCurrentUserId());

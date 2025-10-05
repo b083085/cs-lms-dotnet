@@ -2,9 +2,9 @@
 
 namespace Capstone.LMS.Application.Commands.Book
 {
-    public sealed class BorrowBookCommandValidator : AbstractValidator<BorrowBookCommand>
+    public sealed class RequestBorrowBookCommandValidator : AbstractValidator<RequestBorrowBookCommand>
     {
-        public BorrowBookCommandValidator()
+        public RequestBorrowBookCommandValidator()
         {
             RuleFor(x => x.UserId).NotEmpty();
             RuleFor(x => x.BookId).NotEmpty();

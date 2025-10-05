@@ -27,7 +27,7 @@ namespace Capstone.LMS.Application.Commands.Author
             var author = await _authorRepository.GetAsync(g => g.Id == request.AuthorId, cancellationToken);
             if (author == null)
             {
-                return Result.Failure(DomainErrors.Author.AuthorNotFound);
+                return Result.Failure(DomainErrors.Author.NotFound);
             }
 
             author.Deleted(_httpContextAccessor.GetCurrentUserId());

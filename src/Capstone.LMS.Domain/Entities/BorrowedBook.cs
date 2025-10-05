@@ -14,27 +14,28 @@ namespace Capstone.LMS.Domain.Entities
 
         private BorrowedBook(
             Guid id,
-            Book book,
-            User user,
-            DateTime? issuedOnUtc,
+            Guid bookId,
+            Guid userId,
+            DateTime? borrowedOnUtc,
             DateTime? dueOnUtc,
             DateTime? returnedOnUtc,
             BorrowedStatus status,
             string bookCondition)
             : base(id)
         {
-            BorrowedOnUtc = issuedOnUtc;
+            BookId = bookId;
+            UserId = userId;
+            BorrowedOnUtc = borrowedOnUtc;
             DueOnUtc = dueOnUtc;
             ReturnedOnUtc = returnedOnUtc;
             Status = status;
             BookCondition = bookCondition;
-
-            AddBook(book);
-            AddUser(user);
         }
 
         public Guid BookId { get; private set; }
         public Guid UserId { get; private set; }
+        public Guid? ApprovedBy { get; private set; }
+        public DateTime? ApprovedOnUtc { get; private set; }
         public DateTime? BorrowedOnUtc { get; private set; }
         public DateTime? DueOnUtc { get; private set; }
         public DateTime? ReturnedOnUtc { get; private set; }
@@ -47,14 +48,18 @@ namespace Capstone.LMS.Domain.Entities
         public Book Book { get; private set; }
         public User User { get; private set; }
 
-        public void Borrowed()
+        public void Approve(Guid approvedBy)
         {
+            ApprovedBy = approvedBy;
+            ApprovedOnUtc = DateTime.UtcNow;
+
             BorrowedOnUtc = DateTime.UtcNow;
             DueOnUtc = DateTime.UtcNow.AddDays(LibraryPolicy.Borrowing.LoanPeriodDays);
+
             Status = BorrowedStatus.Borrowed;
         }
 
-        public void Returned()
+        public void Return()
         {
             ReturnedOnUtc = DateTime.UtcNow;
             Status = BorrowedStatus.Returned;
@@ -65,27 +70,14 @@ namespace Capstone.LMS.Domain.Entities
             Status = BorrowedStatus.Overdue;
         }
 
-        public void AddBook(Book book)
-        {
-            BookId = book.Id;
-        }
-
-        public void AddUser(User user)
-        {
-            UserId = user.Id;
-        }
-
-        public void SetBookCondition(string condition)
-        {
-            BookCondition = condition;
-        }
+        public void SetBookCondition(string condition) => BookCondition = condition;
 
 
         public static BorrowedBook Create(
             Guid id,
-            Book book,
-            User user,
-            DateTime? issuedOnUtc,
+            Guid bookId,
+            Guid userId,
+            DateTime? borrowedOnUtc,
             DateTime? dueOnUtc,
             DateTime? returnedOnUtc,
             BorrowedStatus status,
@@ -93,15 +85,15 @@ namespace Capstone.LMS.Domain.Entities
         {
             var borrowedBook = new BorrowedBook(
                 id,
-                book,
-                user,
-                issuedOnUtc,
+                bookId,
+                userId,
+                borrowedOnUtc,
                 dueOnUtc,
                 returnedOnUtc,
                 status,
                 bookCondition);
 
-            borrowedBook.Created(user.Id);
+            borrowedBook.Created(userId);
 
             return borrowedBook;
         }

@@ -23,14 +23,14 @@ namespace Capstone.LMS.Application.Commands.Auth
         public async Task<Result> Handle(VerifyAccountCommand request, CancellationToken cancellationToken)
         {
             var user = await _userManager.FindByIdAsync(request.UserId.ToString());
-            if (user == null)
+            if (user is null)
             {
-                return Result.Failure(DomainErrors.Auth.UserNotFound);
+                return Result.Failure(DomainErrors.User.NotFound);
             }
 
             if (user.EmailConfirmed)
             {
-                return Result.Failure(DomainErrors.Auth.UserAlreadyConfirmed);
+                return Result.Failure(DomainErrors.User.AlreadyConfirmed);
             }
 
             var decodedEmailConfirmationToken = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(request.Token));

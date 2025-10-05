@@ -38,13 +38,13 @@ namespace Capstone.LMS.Application.Commands.Auth
             var user = await _userManager.FindByEmailAsync(request.Email);
             if(user is null || !user.EmailConfirmed)
             {
-                return Result.Failure<LoginResponseDto>(DomainErrors.Auth.UserNotFound);
+                return Result.Failure<LoginResponseDto>(DomainErrors.User.NotFound);
             }
 
             var validPassword = await _userManager.CheckPasswordAsync(user, request.Password);
             if (!validPassword)
             {
-                return Result.Failure<LoginResponseDto>(DomainErrors.Auth.PasswordIsInvalid);
+                return Result.Failure<LoginResponseDto>(DomainErrors.Password.IsInvalid);
             }
 
             var accessToken = await _tokenProvider.CreateAccessTokenAsync(user);

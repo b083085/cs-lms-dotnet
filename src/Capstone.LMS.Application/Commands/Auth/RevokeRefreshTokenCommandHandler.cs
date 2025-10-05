@@ -33,7 +33,7 @@ namespace Capstone.LMS.Application.Commands.Auth
                 response.Failure();
             }
 
-            await _refreshTokenRepository.DeleteAllAsync(r => r.UserId == request.UserId, cancellationToken);
+            await _refreshTokenRepository.DeleteAsync(r => r.UserId == request.UserId, cancellationToken);
 
             response.Success();
 

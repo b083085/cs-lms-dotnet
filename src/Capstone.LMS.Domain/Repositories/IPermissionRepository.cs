@@ -1,6 +1,8 @@
-﻿namespace Capstone.LMS.Domain.Repositories
+﻿using Capstone.LMS.Domain.Entities;
+
+namespace Capstone.LMS.Domain.Repositories
 {
-    public interface IPermissionRepository
+    public interface IPermissionRepository : IBaseRepository<Permission>
     {
     }
 }

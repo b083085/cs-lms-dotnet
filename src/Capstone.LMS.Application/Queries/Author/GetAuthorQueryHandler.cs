@@ -21,7 +21,7 @@ namespace Capstone.LMS.Application.Queries.Author
             var author = await _authorRepository.GetAsync(g => g.Id == request.AuthorId, cancellationToken);
             if (author == null)
             {
-                return Result.Failure<GetAuthorResponseDto>(DomainErrors.Author.AuthorNotFound);
+                return Result.Failure<GetAuthorResponseDto>(DomainErrors.Author.NotFound);
             }
 
             return new GetAuthorResponseDto

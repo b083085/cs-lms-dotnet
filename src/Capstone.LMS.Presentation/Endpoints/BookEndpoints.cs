@@ -32,6 +32,19 @@ namespace Capstone.LMS.Presentation.Endpoints
 
             book.MapPut("", UpdateBookAsync)
                  .WithSummary("Updates the book.");
+
+            book.MapGet("borrow/{bookBorrowedId:guid}", GetBookBorrowedAsync)
+                 .WithName(EndpointNames.Book.GetBookBorrowed)
+                 .WithSummary("Gets the details of the book borrowed.");
+
+            book.MapPost("borrow/request", RequestBorrowBookAsync)
+                 .WithSummary("Request to borrow the book.");
+
+            book.MapPut("borrow/approve/{bookBorrowedId:guid}", ApproveRequestBorrowBookAsync)
+                 .WithSummary("Approves the request to borrow the book.");
+
+            book.MapPut("borrow/return/{bookBorrowedId:guid}", ReturnBorrowedBookBookAsync)
+                 .WithSummary("Returns the borrowed book.");
         }
 
         private static async Task<Results<Ok<GetBookResponseDto>, NotFound<Error>>> GetBookAsync(
@@ -91,6 +104,55 @@ namespace Capstone.LMS.Presentation.Endpoints
             return result.IsSuccess ?
                 TypedResults.Ok() :
                 TypedResults.BadRequest(result.Error);
+        }
+
+        private static async Task<Results<Ok<GetBookBorrowedResponseDto>, NotFound<Error>>> GetBookBorrowedAsync(
+            IMediator mediator,
+            Guid bookBorrowedId,
+            CancellationToken cancellationToken)
+        {
+            var result = await mediator.Send(new GetBookBorrowedQuery(bookBorrowedId), cancellationToken);
+
+            return result.IsSuccess ?
+                TypedResults.Ok(result.Value) :
+                TypedResults.NotFound(result.Error);
+        }
+
+        private static async Task<Results<Created<BorrowBookResponseDto>, Conflict<Error>>> RequestBorrowBookAsync(
+            IMediator mediator,
+            RequestBorrowBookCommand command,
+            LinkGenerator links,
+            CancellationToken cancellationToken)
+        {
+            var result = await mediator.Send(command, cancellationToken);
+
+            return result.IsSuccess ?
+                TypedResults.Created(links.GetPathByName(EndpointNames.Book.GetBookBorrowed, new { bookBorrowedId = result.Value.BookBorrowedId }), result.Value) :
+                TypedResults.Conflict(result.Error);
+        }
+
+        private static async Task<Results<Ok, Conflict<Error>>> ApproveRequestBorrowBookAsync(
+            IMediator mediator,
+            Guid bookBorrowedId,
+            CancellationToken cancellationToken)
+        {
+            var result = await mediator.Send(new ApproveBorrowBookCommand(bookBorrowedId), cancellationToken);
+
+            return result.IsSuccess ?
+                TypedResults.Ok() :
+                TypedResults.Conflict(result.Error);
+        }
+
+        private static async Task<Results<Ok, Conflict<Error>>> ReturnBorrowedBookBookAsync(
+            IMediator mediator,
+            [AsParameters]ReturnBookCommand command,
+            CancellationToken cancellationToken)
+        {
+            var result = await mediator.Send(command, cancellationToken);
+
+            return result.IsSuccess ?
+                TypedResults.Ok() :
+                TypedResults.Conflict(result.Error);
         }
     }
 }

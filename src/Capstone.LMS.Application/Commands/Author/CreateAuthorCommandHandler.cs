@@ -25,7 +25,7 @@ namespace Capstone.LMS.Application.Commands.Author
             var author = await _authorRepository.GetAsync(g => g.Name.ToLower() == request.Name.ToLower(), cancellationToken);
             if(author is not null)
             {
-                return Result.Failure<CreateAuthorResponseDto>(DomainErrors.Author.AuthorAlreadyExist);
+                return Result.Failure<CreateAuthorResponseDto>(DomainErrors.Author.AlreadyExist);
             }
 
             author = Domain.Entities.Author.Create(Guid.NewGuid(), request.Name);

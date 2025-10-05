@@ -21,7 +21,7 @@ namespace Capstone.LMS.Application.Queries.Genre
             var genre = await _genreRepository.GetAsync(g => g.Id == request.GenreId, cancellationToken);
             if (genre == null)
             {
-                return Result.Failure<GetGenreResponseDto>(DomainErrors.Genre.GenreNotFound);
+                return Result.Failure<GetGenreResponseDto>(DomainErrors.Genre.NotFound);
             }
 
             return new GetGenreResponseDto

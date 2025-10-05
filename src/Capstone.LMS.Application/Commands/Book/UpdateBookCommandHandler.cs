@@ -28,19 +28,19 @@ namespace Capstone.LMS.Application.Commands.Book
             var book = await _bookRepository.GetAsync(b => b.Id == request.BookId, cancellationToken);
             if (book is null)
             {
-                return Result.Failure(DomainErrors.Book.BookNotFound);
+                return Result.Failure(DomainErrors.Book.NotFound);
             }
 
             var genre = await _genreRepository.GetAsync(g => g.Id == request.GenreId, cancellationToken);
             if (genre is null)
             {
-                return Result.Failure(DomainErrors.Genre.GenreNotFound);
+                return Result.Failure(DomainErrors.Genre.NotFound);
             }
 
             var author = await _authorRepository.GetAsync(a => a.Id == request.AuthorId, cancellationToken);
             if (author is null)
             {
-                return Result.Failure(DomainErrors.Author.AuthorNotFound);
+                return Result.Failure(DomainErrors.Author.NotFound);
             }
 
             book.SetTitle(request.Title);

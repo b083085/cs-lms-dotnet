@@ -12,24 +12,14 @@ using System.Threading.Tasks;
 
 namespace Capstone.LMS.Application.Queries.Auth
 {
-    public sealed class GetRefreshTokenQueryHandler : IRequestHandler<GetRefreshTokenQuery, Result<GetRefreshTokenResponseDto>>
+    public sealed class GetRefreshTokenQueryHandler(
+        ITokenProvider tokenProvider,
+        IRefreshTokenRepository refreshTokenRepository,
+        IUnitOfWork unitOfWork) : IRequestHandler<GetRefreshTokenQuery, Result<GetRefreshTokenResponseDto>>
     {
-        private readonly ITokenProvider _tokenProvider;
-        private readonly IRefreshTokenRepository _refreshTokenRepository;
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly UserManager<Domain.Entities.User> _userManager;
-
-        public GetRefreshTokenQueryHandler(
-            ITokenProvider tokenProvider,
-            IRefreshTokenRepository refreshTokenRepository,
-            IUnitOfWork unitOfWork,
-            UserManager<Domain.Entities.User> userManager)
-        {
-            _tokenProvider = tokenProvider;
-            _refreshTokenRepository = refreshTokenRepository;
-            _unitOfWork = unitOfWork;
-            _userManager = userManager;
-        }
+        private readonly ITokenProvider _tokenProvider = tokenProvider;
+        private readonly IRefreshTokenRepository _refreshTokenRepository = refreshTokenRepository;
+        private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
         public async Task<Result<GetRefreshTokenResponseDto>> Handle(GetRefreshTokenQuery request, CancellationToken cancellationToken)
         {
@@ -37,7 +27,7 @@ namespace Capstone.LMS.Application.Queries.Auth
 
             if (refreshToken is null || refreshToken.ExpiresOnUtc < DateTime.UtcNow)
             {
-                return Result.Failure<GetRefreshTokenResponseDto>(DomainErrors.Auth.RefreshTokenIsExpired);
+                return Result.Failure<GetRefreshTokenResponseDto>(DomainErrors.RefreshToken.IsExpired);
             }
 
             refreshToken.Token = _tokenProvider.CreateRefreshToken();

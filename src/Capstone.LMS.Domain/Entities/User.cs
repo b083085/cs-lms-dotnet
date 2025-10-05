@@ -71,6 +71,8 @@ namespace Capstone.LMS.Domain.Entities
             return user;
         }
 
+        public string GetFullName() => $"{FirstName} {LastName}";
+
         public void Active()
         {
             ActiveStatus = ActiveStatus.Active;

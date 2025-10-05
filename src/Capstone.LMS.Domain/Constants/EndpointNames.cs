@@ -15,6 +15,7 @@
         public static class Book
         {
             public static readonly string GetBook = "GetBook";
+            public static readonly string GetBookBorrowed = "GetBookBorrowed";
         }
 
         public static class Genre
