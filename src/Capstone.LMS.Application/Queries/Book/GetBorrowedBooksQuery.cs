@@ -2,5 +2,5 @@
 
 namespace Capstone.LMS.Application.Queries.Book
 {
-    public record GetBorrowedBooksQuery() : BaseListQuery<GetBorrowedBookResponseDto>();
+    public record GetBorrowedBooksQuery() : BaseListQuery<GetBookBorrowedResponseDto>();
 }

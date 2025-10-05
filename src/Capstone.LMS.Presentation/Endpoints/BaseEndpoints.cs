@@ -20,12 +20,12 @@ namespace Capstone.LMS.Presentation.Endpoints
 
             var mapGroup = app
                 .MapGroup(prefix)
-                //.RequireAuthorization(p =>
-                //{
-                //    p.AuthenticationSchemes = new List<string>() { JwtBearerDefaults.AuthenticationScheme };
-                //    p.RequireAuthenticatedUser();
-                //})
-                .AllowAnonymous()
+                .RequireAuthorization(p =>
+                {
+                    p.AuthenticationSchemes = new List<string>() { JwtBearerDefaults.AuthenticationScheme };
+                    p.RequireAuthenticatedUser();
+                })
+                //.AllowAnonymous()
                 .WithApiVersionSet(apiVersionSet);
                 
 

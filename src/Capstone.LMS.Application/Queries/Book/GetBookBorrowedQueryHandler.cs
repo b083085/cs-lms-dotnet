@@ -11,12 +11,10 @@ namespace Capstone.LMS.Application.Queries.Book
 {
     public sealed class GetBookBorrowedQueryHandler(
         IBorrowedBookRepository borrowedBookRepository,
-        IUserRepository userRepository,
         ILogger<GetBookBorrowedQueryHandler> logger)
         : IRequestHandler<GetBookBorrowedQuery, Result<GetBookBorrowedResponseDto>>
     {
         private readonly IBorrowedBookRepository _borrowedBookRepository = borrowedBookRepository;
-        private readonly IUserRepository _userRepository = userRepository;
         private readonly ILogger<GetBookBorrowedQueryHandler> _logger = logger;
 
         public async Task<Result<GetBookBorrowedResponseDto>> Handle(GetBookBorrowedQuery request, CancellationToken cancellationToken)
@@ -27,15 +25,13 @@ namespace Capstone.LMS.Application.Queries.Book
                 return Result.Failure<GetBookBorrowedResponseDto>(DomainErrors.BookBorrowed.NotFound);
             }
 
-            var approver = await _userRepository.GetAsync(u => u.Id == bookBorrowed.ApprovedBy, cancellationToken);
-
             var book = bookBorrowed.Book;
 
             return new GetBookBorrowedResponseDto
             {
                 BookBorrowedId = bookBorrowed.Id,
                 Status = bookBorrowed.Status,
-                ApproverName = approver?.GetFullName(),
+                ApproverName = bookBorrowed.Approver?.GetFullName(),
                 ApprovedOnUtc = bookBorrowed.ApprovedOnUtc,
                 BorrowedOnUtc = bookBorrowed.BorrowedOnUtc,
                 DueOnUtc = bookBorrowed.DueOnUtc,

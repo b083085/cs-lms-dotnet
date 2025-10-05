@@ -85,12 +85,7 @@ namespace Capstone.LMS.Domain.Entities
             var borrowedBook = BorrowedBook.Create(
                 Guid.NewGuid(), 
                 this.Id, 
-                user.Id, 
-                null, 
-                null, 
-                null, 
-                Enums.BorrowedStatus.Pending, 
-                string.Empty);
+                user.Id);
 
             _borrowedBooks.Add(borrowedBook);
 

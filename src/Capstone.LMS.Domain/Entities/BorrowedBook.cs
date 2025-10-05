@@ -21,7 +21,12 @@ namespace Capstone.LMS.Domain.Entities
             DateTime? dueOnUtc,
             DateTime? returnedOnUtc,
             BorrowedStatus status,
-            string bookCondition)
+            string bookCondition,
+            Guid? approvedBy,
+            DateTime? approvedOnUtc,
+            Guid? rejectedBy,
+            DateTime? rejectedOnUtc,
+            string rejectedReason)
             : base(id)
         {
             BookId = bookId;
@@ -31,6 +36,11 @@ namespace Capstone.LMS.Domain.Entities
             ReturnedOnUtc = returnedOnUtc;
             Status = status;
             BookCondition = bookCondition;
+            ApprovedBy = approvedBy;
+            ApprovedOnUtc = approvedOnUtc;
+            RejectedBy = rejectedBy;
+            RejectedOnUtc = rejectedOnUtc;
+            RejectedReason = rejectedReason;
         }
 
         public Guid BookId { get; private set; }
@@ -51,6 +61,7 @@ namespace Capstone.LMS.Domain.Entities
 
         public Book Book { get; private set; }
         public User User { get; private set; }
+        public User Approver { get; private set; }
 
         public void Approve(Guid approvedBy)
         {
@@ -93,22 +104,22 @@ namespace Capstone.LMS.Domain.Entities
         public static BorrowedBook Create(
             Guid id,
             Guid bookId,
-            Guid userId,
-            DateTime? borrowedOnUtc,
-            DateTime? dueOnUtc,
-            DateTime? returnedOnUtc,
-            BorrowedStatus status,
-            string bookCondition)
+            Guid userId)
         {
             var borrowedBook = new BorrowedBook(
                 id,
                 bookId,
                 userId,
-                borrowedOnUtc,
-                dueOnUtc,
-                returnedOnUtc,
-                status,
-                bookCondition);
+                null,
+                null,
+                null,
+                BorrowedStatus.Pending,
+                string.Empty,
+                null,
+                null,
+                null,
+                null,
+                string.Empty);
 
             borrowedBook.Created(userId);
 

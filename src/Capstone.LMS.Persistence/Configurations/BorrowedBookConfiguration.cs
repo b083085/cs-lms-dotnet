@@ -28,6 +28,11 @@ namespace Capstone.LMS.Persistence.Configurations
                 .WithMany(p => p.BorrowedBooks)
                 .HasForeignKey(p => p.UserId);
 
+            builder.HasOne(p => p.Approver)
+                .WithMany(p => p.ApproverBorrowedBooks)
+                .HasForeignKey(p => p.ApprovedBy)
+                .OnDelete(DeleteBehavior.NoAction);
+
             builder.ToTable(EntityTables.BorrowedBooks);
         }
     }

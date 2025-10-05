@@ -14,6 +14,7 @@ namespace Capstone.LMS.Persistence.Repositories
                 .Include(p => p.Book).ThenInclude(p => p.Genre)
                 .Include(p => p.Book).ThenInclude(p => p.Author)
                 .Include(p => p.User)
+                .Include(p => p.Approver)
                 .FirstOrDefaultAsync(predicate, cancellationToken);
         }
     }

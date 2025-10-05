@@ -51,6 +51,7 @@ namespace Capstone.LMS.Domain.Entities
         public int BorrowingLimit { get; private set; }
 
         public IReadOnlyList<BorrowedBook> BorrowedBooks => [.. _borrowedBooks];
+        public ICollection<BorrowedBook> ApproverBorrowedBooks { get; private set; }
 
         public static User Create(
             Guid id,

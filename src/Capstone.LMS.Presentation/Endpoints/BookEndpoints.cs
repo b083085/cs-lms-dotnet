@@ -1,6 +1,7 @@
 ﻿using Capstone.LMS.Application.Commands.Book;
 using Capstone.LMS.Application.Dtos;
 using Capstone.LMS.Application.Dtos.Book;
+using Capstone.LMS.Application.Extensions;
 using Capstone.LMS.Application.Queries.Book;
 using Capstone.LMS.Domain.Constants;
 using Capstone.LMS.Domain.Shared;
@@ -45,6 +46,15 @@ namespace Capstone.LMS.Presentation.Endpoints
 
             book.MapPut("borrow/return/{bookBorrowedId:guid}", ReturnBorrowedBookBookAsync)
                  .WithSummary("Returns the borrowed book.");
+
+            book.MapGet("popular", GetPopularBooksAsync)
+                 .WithSummary("Gets the list of popular books.");
+
+            book.MapGet("overdue", GetOverdueBooksAsync)
+                 .WithSummary("Gets the list of overdue books.");
+
+            book.MapGet("borrowed", GetBorrowedBooksAsync)
+                 .WithSummary("Gets the list of borrowed books.");
         }
 
         private static async Task<Results<Ok<GetBookResponseDto>, NotFound<Error>>> GetBookAsync(
@@ -153,6 +163,34 @@ namespace Capstone.LMS.Presentation.Endpoints
             return result.IsSuccess ?
                 TypedResults.Ok() :
                 TypedResults.Conflict(result.Error);
+        }
+
+        private static async Task<Ok<IEnumerable<GetPopularBookResponseDto>>> GetPopularBooksAsync(
+            IMediator mediator,
+            CancellationToken cancellationToken)
+        {
+            var result = await mediator.Send(new GetPopularBooksQuery(), cancellationToken);
+
+            return TypedResults.Ok(result);
+        }
+
+        private static async Task<Ok<IEnumerable<GetOverdueBookResponseDto>>> GetOverdueBooksAsync(
+            IMediator mediator,
+            CancellationToken cancellationToken)
+        {
+            var result = await mediator.Send(new GetOverdueBooksQuery(), cancellationToken);
+
+            return TypedResults.Ok(result);
+        }
+
+        private static async Task<Ok<ListResponseDto<GetBookBorrowedResponseDto>>> GetBorrowedBooksAsync(
+            IMediator mediator,
+            [AsParameters]GetBorrowedBooksQuery query,
+            CancellationToken cancellationToken)
+        {
+            var result = await mediator.Send(query, cancellationToken);
+
+            return TypedResults.Ok(result);
         }
     }
 }
