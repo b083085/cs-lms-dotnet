@@ -46,7 +46,7 @@ namespace Capstone.LMS.Presentation.Endpoints
                 TypedResults.NotFound(result.Error);
         }
 
-        private static async Task<Ok<ListResponseDto<GetBookResponseDto>>> GetBooksAsync(
+        private static async Task<Ok<ListResponseDto<GetBookItemResponseDto>>> GetBooksAsync(
             IMediator mediator,
             [AsParameters]GetBooksQuery query,
             CancellationToken cancellationToken)

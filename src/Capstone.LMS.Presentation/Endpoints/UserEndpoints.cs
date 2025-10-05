@@ -17,7 +17,7 @@ namespace Capstone.LMS.Presentation.Endpoints
             var user = CreateMapGroup(app, "users")
                 .WithTags("User");
 
-            user.MapGet("{userId}", GetUserAsync)
+            user.MapGet("{userId:guid}", GetUserAsync)
                  .WithName(EndpointNames.User.GetUser)
                  .WithSummary("Gets the user details.");
 
@@ -27,7 +27,7 @@ namespace Capstone.LMS.Presentation.Endpoints
             user.MapPost("", CreateUserAsync)
                  .WithSummary("Creates a user.");
 
-            user.MapDelete("{userId}", DeleteUserAsync)
+            user.MapDelete("{userId:guid}", DeleteUserAsync)
                  .WithSummary("Deletes the user.");
 
             user.MapPut("", UpdateUserAsync)

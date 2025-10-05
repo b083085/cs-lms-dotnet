@@ -16,12 +16,12 @@ namespace Capstone.LMS.Application.Queries.Book
     public sealed class GetBooksQueryHandler(
         IBookRepository bookRepository,
         ILogger<GetBooksQueryHandler> logger) 
-        : IRequestHandler<GetBooksQuery, ListResponseDto<GetBookResponseDto>>
+        : IRequestHandler<GetBooksQuery, ListResponseDto<GetBookItemResponseDto>>
     {
         private readonly IBookRepository _bookRepository = bookRepository;
         private readonly ILogger<GetBooksQueryHandler> _logger = logger;
 
-        public async Task<ListResponseDto<GetBookResponseDto>> Handle(GetBooksQuery request, CancellationToken cancellationToken)
+        public async Task<ListResponseDto<GetBookItemResponseDto>> Handle(GetBooksQuery request, CancellationToken cancellationToken)
         {
             // get queryable
             var query = _bookRepository.GetQueryable();
@@ -29,7 +29,8 @@ namespace Capstone.LMS.Application.Queries.Book
             // includes
             query = query
                 .Include(q => q.Author)
-                .Include(q => q.Genre);
+                .Include(q => q.Genre)
+                .Include(q => q.BorrowedBooks);
 
             // filter
             var searchTermLowerCase = request.SearchTerm?.ToLower();
@@ -86,7 +87,7 @@ namespace Capstone.LMS.Application.Queries.Book
 
             // retrieve
             var items = await query
-                .Select(book => new GetBookResponseDto
+                .Select(book => new GetBookItemResponseDto
                 {
                     BookId = book.Id,
                     Title = book.Title,
@@ -110,7 +111,7 @@ namespace Capstone.LMS.Application.Queries.Book
                 .ToListAsync(cancellationToken);
 
 
-            var result = new ListResponseDto<GetBookResponseDto>
+            var result = new ListResponseDto<GetBookItemResponseDto>
             {
                 Page = request.Page.Value,
                 PageSize = request.PageSize.Value,
