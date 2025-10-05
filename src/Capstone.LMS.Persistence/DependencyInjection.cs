@@ -32,6 +32,7 @@ namespace Capstone.LMS.Persistence
             services.AddScoped<IPermissionRepository, PermissionRepository>();
             services.AddScoped<ISubPermissionRepository, SubPermissionRepository>();
             services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
         }
 
         private static void AddDbContext(IServiceCollection services, ConfigurationManager configuration)

@@ -22,7 +22,7 @@ namespace Capstone.LMS.Presentation.Endpoints
                  .WithSummary("Gets the user details.");
 
             user.MapPost("list", GetUsersAsync)
-                 .WithSummary("Gets a list of users.");
+                 .WithSummary("Gets the list of users.");
 
             user.MapPost("", CreateUserAsync)
                  .WithSummary("Creates a user.");
@@ -48,7 +48,7 @@ namespace Capstone.LMS.Presentation.Endpoints
 
         private static async Task<Ok<ListResponseDto<GetUserResponseDto>>> GetUsersAsync(
             IMediator mediator,
-            GetUsersQuery command,
+            [AsParameters]GetUsersQuery command,
             CancellationToken cancellationToken)
         {
             var result = await mediator.Send(command, cancellationToken);

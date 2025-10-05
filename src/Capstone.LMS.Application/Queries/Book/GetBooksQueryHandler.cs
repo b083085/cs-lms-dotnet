@@ -39,11 +39,11 @@ namespace Capstone.LMS.Application.Queries.Book
             query = request.Availability is null ? query : query.Where(f => f.Availability == request.Availability);
             query = request.SearchTerm.IsEmpty() ? query :
                     query.Where(f =>
-                        f.Title.Contains(searchTermLowerCase) ||
-                        f.Summary.Contains(searchTermLowerCase) ||
-                        f.Author.Name.Contains(searchTermLowerCase) ||
-                        f.Genre.Name.Contains(searchTermLowerCase) ||
-                        f.Isbn.Contains(searchTermLowerCase));
+                        f.Title.ToLower().Contains(searchTermLowerCase) ||
+                        f.Summary.ToLower().Contains(searchTermLowerCase) ||
+                        f.Author.Name.ToLower().Contains(searchTermLowerCase) ||
+                        f.Genre.Name.ToLower().Contains(searchTermLowerCase) ||
+                        f.Isbn.ToLower().Contains(searchTermLowerCase));
 
             // get total count
             var total = await query.CountAsync(cancellationToken);
