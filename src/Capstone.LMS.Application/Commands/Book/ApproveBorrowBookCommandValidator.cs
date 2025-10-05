@@ -8,6 +8,11 @@ namespace Capstone.LMS.Application.Commands.Book
         {
             RuleFor(x => x.BookBorrowedId).NotEmpty();
             RuleFor(x => x.Approve).NotEmpty();
+
+            RuleFor(x => x.RejectReason)
+                .NotEmpty()
+                .When(x => x.Approve == false)
+                .WithMessage("Reject reason is required when rejected.");
         }
     }
 }
