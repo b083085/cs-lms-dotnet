@@ -3,5 +3,5 @@ using System;
 
 namespace Capstone.LMS.Domain.DomainEvents
 {
-    public sealed record BorrowedBookDomainEvent(Guid BookId) : IDomainEvent;
+    public sealed record RejectedBorrowBookDomainEvent(Guid BookBorrowedId) : IDomainEvent;
 }

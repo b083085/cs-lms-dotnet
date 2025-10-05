@@ -1,4 +1,5 @@
 ﻿using Capstone.LMS.Domain.Constants;
+using Capstone.LMS.Domain.DomainEvents;
 using Capstone.LMS.Domain.Enums;
 using Capstone.LMS.Domain.Primitives;
 using System;
@@ -6,7 +7,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Capstone.LMS.Domain.Entities
 {
-    public sealed class BorrowedBook : Entity
+    public sealed class BorrowedBook : AggregateRoot
     {
         private BorrowedBook() 
         { 
@@ -41,6 +42,9 @@ namespace Capstone.LMS.Domain.Entities
         public DateTime? ReturnedOnUtc { get; private set; }
         public BorrowedStatus Status { get; private set; }
         public string BookCondition { get; private set; }
+        public string RejectedReason { get; set; }
+        public Guid? RejectedBy { get; private set; }
+        public DateTime? RejectedOnUtc { get; set; }
 
         [NotMapped]
         public bool IsOverdue => DateTime.UtcNow > DueOnUtc;
@@ -57,6 +61,19 @@ namespace Capstone.LMS.Domain.Entities
             DueOnUtc = DateTime.UtcNow.AddDays(LibraryPolicy.Borrowing.LoanPeriodDays);
 
             Status = BorrowedStatus.Borrowed;
+
+            RaiseDomainEvent(new ApprovedBorrowBookDomainEvent(Id));
+        }
+
+        public void Rejected(Guid rejectedBy, string rejectedReason)
+        {
+            RejectedBy = rejectedBy;
+            RejectedOnUtc = DateTime.UtcNow;
+            RejectedReason = rejectedReason;
+
+            Status = BorrowedStatus.Rejected;
+
+            RaiseDomainEvent(new RejectedBorrowBookDomainEvent(Id));
         }
 
         public void Return()

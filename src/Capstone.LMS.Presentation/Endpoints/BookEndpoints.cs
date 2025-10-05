@@ -40,7 +40,7 @@ namespace Capstone.LMS.Presentation.Endpoints
             book.MapPost("borrow/request", RequestBorrowBookAsync)
                  .WithSummary("Request to borrow the book.");
 
-            book.MapPut("borrow/approve/{bookBorrowedId:guid}", ApproveRequestBorrowBookAsync)
+            book.MapPut("borrow/approve", ApproveRequestBorrowBookAsync)
                  .WithSummary("Approves the request to borrow the book.");
 
             book.MapPut("borrow/return/{bookBorrowedId:guid}", ReturnBorrowedBookBookAsync)
@@ -133,10 +133,10 @@ namespace Capstone.LMS.Presentation.Endpoints
 
         private static async Task<Results<Ok, Conflict<Error>>> ApproveRequestBorrowBookAsync(
             IMediator mediator,
-            Guid bookBorrowedId,
+            ApproveBorrowBookCommand command,
             CancellationToken cancellationToken)
         {
-            var result = await mediator.Send(new ApproveBorrowBookCommand(bookBorrowedId), cancellationToken);
+            var result = await mediator.Send(command, cancellationToken);
 
             return result.IsSuccess ?
                 TypedResults.Ok() :

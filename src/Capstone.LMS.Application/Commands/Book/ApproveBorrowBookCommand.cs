@@ -5,5 +5,7 @@ using System;
 namespace Capstone.LMS.Application.Commands.Book
 {
     public record ApproveBorrowBookCommand(
-        Guid BookBorrowedId) : IRequest<Result>;
+        Guid BookBorrowedId,
+        bool Approve,
+        string RejectReason) : IRequest<Result>;
 }

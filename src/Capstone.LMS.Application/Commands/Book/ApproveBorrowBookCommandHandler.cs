@@ -32,14 +32,23 @@ namespace Capstone.LMS.Application.Commands.Book
             }
 
             var approverId = _httpContextAccessor.GetCurrentUserId();
-            bookBorrowed.Approve(approverId);
+
+            if (request.Approve)
+            {
+                bookBorrowed.Approve(approverId);
+            }
+            else
+            {
+                bookBorrowed.Rejected(approverId, request.RejectReason);
+            }
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            _logger.LogInformation("The request by {FirstName} {LastName} to borrow the book {BookTitle} has been approved.", 
+            _logger.LogInformation("The request by {FirstName} {LastName} to borrow the book {BookTitle} has been {ApproveStatus}.", 
                 bookBorrowed.Book.Title, 
                 bookBorrowed.User.FirstName, 
-                bookBorrowed.User.LastName);
+                bookBorrowed.User.LastName,
+                bookBorrowed.Status.ToString());
 
             return Result.Success();
         }

@@ -7,6 +7,7 @@ namespace Capstone.LMS.Application.Commands.Book
         public ApproveBorrowBookCommandValidator()
         {
             RuleFor(x => x.BookBorrowedId).NotEmpty();
+            RuleFor(x => x.Approve).NotEmpty();
         }
     }
 }

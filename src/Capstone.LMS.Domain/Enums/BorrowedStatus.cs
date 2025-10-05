@@ -8,6 +8,7 @@ namespace Capstone.LMS.Domain.Enums
         Pending = 0,
         Borrowed = 1,
         Returned = 2,
-        Overdue = 3
+        Overdue = 3,
+        Rejected = 4
     }
 }

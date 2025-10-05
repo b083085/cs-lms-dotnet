@@ -2,6 +2,7 @@
 using Capstone.LMS.Application.Services;
 using Capstone.LMS.Domain.Entities;
 using Capstone.LMS.Domain.Exceptions;
+using Capstone.LMS.Domain.Repositories;
 using Capstone.LMS.Infrastructure.Site;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Routing;
@@ -14,12 +15,14 @@ namespace Capstone.LMS.Infrastructure.Services
 {
     internal sealed class EmailService(
         UserManager<User> userManager,
+        IBorrowedBookRepository borrowedBookRepository,
         LinkGenerator links,
         IEmailClient emailClient,
         IOptions<SiteOptions> siteOptions,
         ILogger<EmailService> logger) : IEmailService
     {
         private readonly UserManager<User> _userManager = userManager;
+        private readonly IBorrowedBookRepository _borrowedBookRepository = borrowedBookRepository;
         private readonly LinkGenerator _links = links;
         private readonly IEmailClient _emailClient = emailClient;
         private readonly SiteOptions _siteOptions = siteOptions.Value;
@@ -27,7 +30,7 @@ namespace Capstone.LMS.Infrastructure.Services
 
         public async Task SendEmailConfirmationLinkAsync(Guid userId, CancellationToken cancellationToken)
         {
-            var user = await _userManager.FindByIdAsync(userId.ToString()) ?? throw new UserNotFoundException(userId);
+            User user = await GetUserAsync(userId);
 
             var emailConfirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             var encodedConfirmationToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(emailConfirmationToken));
@@ -47,6 +50,35 @@ namespace Capstone.LMS.Infrastructure.Services
             _logger.LogInformation("Email confirmation sent successfully for user {UserId}.", userId);
         }
 
+        public async Task SendRequestToBorrowBookApprovedEmailAsync(Guid bookBorrowedId, CancellationToken cancellationToken)
+        {
+            await SendRequestToBorrowBookStatusEmailAsync(bookBorrowedId, CreateRequestToBorrowBookApprovedBody, "Approved", cancellationToken);
+        }
+
+        public async Task SendRequestToBorrowBookRejectedEmailAsync(Guid bookBorrowedId, CancellationToken cancellationToken)
+        {
+            await SendRequestToBorrowBookStatusEmailAsync(bookBorrowedId, CreateRequestToBorrowBookRejectedBody, "Rejected", cancellationToken);
+        }
+
+        private async Task SendRequestToBorrowBookStatusEmailAsync(Guid bookBorrowedId, Func<BorrowedBook, string> bodyFunc, string status, CancellationToken cancellationToken)
+        {
+            var bookBorrowed = await _borrowedBookRepository.GetAsync(b => b.Id == bookBorrowedId, cancellationToken) ?? throw new BookBorrowedNotFoundException(bookBorrowedId);
+
+            var user = await GetUserAsync(bookBorrowed.UserId);
+
+            var bodyMessage = bodyFunc(bookBorrowed);
+
+            var emailMessage = new EmailMessage
+            {
+                To = user.Email,
+                Subject = $"Book Borrow Request {status}",
+                Body = bodyMessage
+            };
+
+            await _emailClient.SendEmailAsync(emailMessage, cancellationToken);
+
+            _logger.LogInformation("Request to borrow book {Status} email sent successfully for user {Email}.", status, user.Email);
+        }
 
         #region Templates
 
@@ -165,7 +197,7 @@ namespace Capstone.LMS.Infrastructure.Services
 
                               <p style=""margin:16px 0 0 0;font-size:13px;color:#6b7280;"">
                                 Need help? Reply to this email or reach out to our support at
-                                <a href=""mailto:support@capstone.com"" style=""color:#1d4ed8;text-decoration:underline;"">support@example.com</a>.
+                                <a href=""mailto:support@library.com"" style=""color:#1d4ed8;text-decoration:underline;"">support@library.com</a>.
                               </p>
                             </td>
                           </tr>
@@ -205,6 +237,189 @@ namespace Capstone.LMS.Infrastructure.Services
             sb.Replace("{{confirmation_link}}", confirmationLink);
 
             return sb.ToString();
+        }
+
+        private string CreateRequestToBorrowBookApprovedBody(BorrowedBook borrowedBook)
+        {
+            var sb = new StringBuilder(@"
+<!-- Replace placeholders like {{borrowerName}} with real values -->
+<!doctype html>
+<html>
+  <head>
+    <meta charset=""utf-8"" />
+    <meta name=""viewport"" content=""width=device-width,initial-scale=1"" />
+    <title>Borrow Request Approved</title>
+  </head>
+  <body style=""margin:0;padding:0;background-color:#f4f4f6;font-family:Arial, sans-serif;"">
+    <table role=""presentation"" width=""100%"" cellpadding=""0"" cellspacing=""0"" style=""background-color:#f4f4f6;padding:20px 0;"">
+      <tr>
+        <td align=""center"">
+          <table role=""presentation"" width=""600"" cellpadding=""0"" cellspacing=""0"" style=""background:#ffffff;border-radius:8px;overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,0.08);"">
+            <!-- Header -->
+            <tr>
+              <td style=""background:#2a7ae2;padding:18px 24px;color:#ffffff;"">
+                <h1 style=""margin:0;font-size:18px;font-weight:600;"">Library Notification</h1>
+              </td>
+            </tr>
+
+            <!-- Body -->
+            <tr>
+              <td style=""padding:20px 24px;color:#333333;"">
+                <p style=""margin:0 0 12px 0;font-size:15px;"">
+                  Hello <strong>{{borrowerName}}</strong>,
+                </p>
+
+                <p style=""margin:0 0 12px 0;font-size:15px;line-height:1.5;"">
+                  Good news — your request to borrow the book
+                  <strong>""{{bookTitle}}""</strong> has been <strong>approved</strong>.
+                </p>
+
+                <table role=""presentation"" cellpadding=""0"" cellspacing=""0"" width=""100%"" style=""margin:12px 0 18px 0;"">
+                  <tr>
+                    <td style=""font-size:14px;padding:6px 0;""><strong>Request ID:</strong></td>
+                    <td style=""font-size:14px;padding:6px 0;"">{{requestId}}</td>
+                  </tr>
+                  <tr>
+                    <td style=""font-size:14px;padding:6px 0;""><strong>Issued On:</strong></td>
+                    <td style=""font-size:14px;padding:6px 0;"">{{issuedOn}}</td>
+                  </tr>
+                  <tr>
+                    <td style=""font-size:14px;padding:6px 0;""><strong>Due Date:</strong></td>
+                    <td style=""font-size:14px;padding:6px 0;"">{{dueDate}}</td>
+                  </tr>
+                </table>
+
+                <p style=""margin:0 0 18px 0;font-size:14px;line-height:1.5;color:#555555;"">
+                  Please bring a valid ID when you pick up the book.
+                </p>
+
+                <p style=""margin:0;font-size:13px;color:#888888;"">
+                  Thank you,<br/>
+                  <strong>Library Management</strong>
+                </p>
+              </td>
+            </tr>
+
+            <!-- Footer -->
+            <tr>
+              <td style=""background:#fafafa;padding:12px 24px;color:#999999;font-size:12px;"">
+                <div>
+                  If you did not request this book, please contact us immediately at
+                  <a href=""mailto:support@library.com"" style=""color:#2a7ae2;text-decoration:none;"">support@library.com</a>.
+                </div>
+              </td>
+            </tr>
+
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
+");
+
+            sb.Replace("{{borrowerName}}", borrowedBook.User.GetFullName());
+            sb.Replace("{{bookTitle}}", borrowedBook.Book.Title);
+            sb.Replace("{{requestId}}", borrowedBook.Id.ToString());
+            sb.Replace("{{issuedOn}}", borrowedBook.BorrowedOnUtc?.ToString("yyyy-MM-dd HH:mm:ss tt"));
+            sb.Replace("{{dueDate}}", borrowedBook.DueOnUtc?.ToString("yyyy-MM-dd HH:mm:ss tt"));
+
+            return sb.ToString();
+        }
+
+        private string CreateRequestToBorrowBookRejectedBody(BorrowedBook borrowedBook)
+        {
+            var sb = new StringBuilder(@"
+<!doctype html>
+<html>
+  <head>
+    <meta charset=""utf-8"" />
+    <meta name=""viewport"" content=""width=device-width,initial-scale=1"" />
+    <title>Borrow Request Rejected</title>
+  </head>
+  <body style=""margin:0;padding:0;background-color:#f4f4f6;font-family:Arial, sans-serif;"">
+    <table role=""presentation"" width=""100%"" cellpadding=""0"" cellspacing=""0"" style=""background-color:#f4f4f6;padding:20px 0;"">
+      <tr>
+        <td align=""center"">
+          <table role=""presentation"" width=""600"" cellpadding=""0"" cellspacing=""0"" style=""background:#ffffff;border-radius:8px;overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,0.08);"">
+            <!-- Header -->
+            <tr>
+              <td style=""background:#d93025;padding:18px 24px;color:#ffffff;"">
+                <h1 style=""margin:0;font-size:18px;font-weight:600;"">Library Notification</h1>
+              </td>
+            </tr>
+
+            <!-- Body -->
+            <tr>
+              <td style=""padding:20px 24px;color:#333333;"">
+                <p style=""margin:0 0 12px 0;font-size:15px;"">
+                  Hello <strong>{{borrowerName}}</strong>,
+                </p>
+
+                <p style=""margin:0 0 12px 0;font-size:15px;line-height:1.5;"">
+                  We’re sorry to inform you that your request to borrow the book
+                  <strong>""{{bookTitle}}""</strong> has been <strong style=""color:#d93025;"">rejected</strong>.
+                </p>
+
+                <table role=""presentation"" cellpadding=""0"" cellspacing=""0"" width=""100%"" style=""margin:12px 0 18px 0;"">
+                  <tr>
+                    <td style=""font-size:14px;padding:6px 0;""><strong>Request ID:</strong></td>
+                    <td style=""font-size:14px;padding:6px 0;"">{{requestId}}</td>
+                  </tr>
+                  <tr>
+                    <td style=""font-size:14px;padding:6px 0;""><strong>Requested On:</strong></td>
+                    <td style=""font-size:14px;padding:6px 0;"">{{requestDate}}</td>
+                  </tr>
+                  <tr>
+                    <td style=""font-size:14px;padding:6px 0;""><strong>Reason:</strong></td>
+                    <td style=""font-size:14px;padding:6px 0;color:#d93025;"">{{rejectionReason}}</td>
+                  </tr>
+                </table>
+
+                <p style=""margin:0 0 18px 0;font-size:14px;line-height:1.5;color:#555555;"">
+                  You may request another book or contact the library for assistance.
+                  If you believe this decision was made in error, please reply to this email or reach out to us at
+                  <a href=""mailto:support@library.com"" style=""color:#2a7ae2;text-decoration:none;"">support@library.com</a>.
+                </p>
+
+                <p style=""margin:0;font-size:13px;color:#888888;"">
+                  Thank you,<br/>
+                  <strong>Library Management</strong>
+                </p>
+              </td>
+            </tr>
+
+            <!-- Footer -->
+            <tr>
+              <td style=""background:#fafafa;padding:12px 24px;color:#999999;font-size:12px;"">
+                <div>
+                  This is an automated message from Library.
+                  If you have questions, please contact
+                  <a href=""mailto:support@library.com"" style=""color:#2a7ae2;text-decoration:none;"">support@library.com</a>.
+                </div>
+              </td>
+            </tr>
+
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
+");
+
+            sb.Replace("{{borrowerName}}", borrowedBook.User.GetFullName());
+            sb.Replace("{{bookTitle}}", borrowedBook.Book.Title);
+            sb.Replace("{{requestId}}", borrowedBook.Id.ToString());
+            sb.Replace("{{requestDate}}", borrowedBook.CreatedOnUtc.ToString("yyyy-MM-dd HH:mm:ss tt"));
+            sb.Replace("{{rejectionReason}}", string.Empty);
+
+            return sb.ToString();
+        }
+
+        private async Task<User> GetUserAsync(Guid userId)
+        {
+            return await _userManager.FindByIdAsync(userId.ToString()) ?? throw new UserNotFoundException(userId);
         }
 
         #endregion
