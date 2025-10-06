@@ -20,7 +20,7 @@ namespace Capstone.LMS.Presentation.Endpoints
                  .WithName(EndpointNames.Genre.GetGenre)
                  .WithSummary("Gets the genre details.");
 
-            genre.MapPost("list", GetGenresAsync)
+            genre.MapGet("", GetGenresAsync)
                  .WithSummary("Gets the list of genres.");
 
             genre.MapPost("", CreateGenreAsync)

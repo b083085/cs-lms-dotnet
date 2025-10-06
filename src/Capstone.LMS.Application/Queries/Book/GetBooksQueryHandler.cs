@@ -35,7 +35,7 @@ namespace Capstone.LMS.Application.Queries.Book
             // filter
             var searchTermLowerCase = request.SearchTerm?.ToLower();
 
-            query = request.PublishedYear is null ? query : query.Where(f => f.PublishedOn.Year == request.PublishedYear.Value);
+            query = request.PublishedYear is null || request.PublishedYear <= 0 ? query : query.Where(f => f.PublishedOn.Year == request.PublishedYear.Value);
             query = request.Author.IsEmpty() ? query : query.Where(f => f.Author.Name == request.Author);
             query = request.Availability is null ? query : query.Where(f => f.Availability == request.Availability);
             query = request.SearchTerm.IsEmpty() ? query :

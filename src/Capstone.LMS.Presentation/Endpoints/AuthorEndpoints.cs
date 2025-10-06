@@ -20,7 +20,7 @@ namespace Capstone.LMS.Presentation.Endpoints
                  .WithName(EndpointNames.Author.GetAuthor)
                  .WithSummary("Gets the author details.");
 
-            genre.MapPost("list", GetAuthorsAsync)
+            genre.MapGet("", GetAuthorsAsync)
                  .WithSummary("Gets the list of authors.");
 
             genre.MapPost("", CreateAuthorAsync)
