@@ -15,7 +15,9 @@ namespace Capstone.LMS.Application.Queries.Dashboard
 
         public GetDashboardQueryValidator()
         {
-            RuleFor(x => x.UserId).NotEmpty();
+            RuleFor(x => x.UserId)
+                .NotEmpty()
+                .When(x => x.Role == Roles.Librarian || x.Role == Roles.Borrower);
 
             RuleFor(x => x.Role)
                 .NotEmpty()
