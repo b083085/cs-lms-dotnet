@@ -19,10 +19,10 @@ namespace Capstone.LMS.Presentation.Endpoints
 
         private static async Task<Ok<GetDashboardResponseDto>> GetDashboardAsync(
             IMediator mediator,
-            string role,
+            [AsParameters]GetDashboardQuery query,
             CancellationToken cancellationToken)
         {
-            var result = await mediator.Send(new GetDashboardQuery(role), cancellationToken);
+            var result = await mediator.Send(query, cancellationToken);
 
             return TypedResults.Ok(result);
         }

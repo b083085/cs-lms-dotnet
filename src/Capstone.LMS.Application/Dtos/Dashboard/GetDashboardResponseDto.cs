@@ -7,5 +7,6 @@ namespace Capstone.LMS.Application.Dtos.Dashboard
         public IEnumerable<DashboardCardDto> Cards { get; set; }
         public IEnumerable<DashboardChartDto> Charts { get; set; }
         public IEnumerable<DashboardTableDto> Tables { get; set; }
+        public IEnumerable<DashboardListDto> List {  get; set; }
     }
 }

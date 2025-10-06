@@ -1,9 +1,10 @@
-﻿using Capstone.LMS.Application.Dtos.Book;
-using Capstone.LMS.Application.Dtos.Dashboard;
+﻿using Capstone.LMS.Application.Dtos.Dashboard;
 using Capstone.LMS.Domain.Constants;
 using Capstone.LMS.Domain.Entities;
+using Capstone.LMS.Domain.Enums;
 using Capstone.LMS.Domain.Repositories;
 using MediatR;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -14,10 +15,12 @@ using System.Threading.Tasks;
 namespace Capstone.LMS.Application.Queries.Dashboard
 {
     public sealed class GetDashboardQueryHandler(
-        IBorrowedBookRepository borrowedBookRepository) : 
+        IBorrowedBookRepository borrowedBookRepository,
+        UserManager<Domain.Entities.User> userManager) :
         IRequestHandler<GetDashboardQuery, GetDashboardResponseDto>
     {
         private readonly IBorrowedBookRepository _borrowedBookRepository = borrowedBookRepository;
+        private readonly UserManager<Domain.Entities.User> _userManager = userManager;
 
         public async Task<GetDashboardResponseDto> Handle(GetDashboardQuery request, CancellationToken cancellationToken)
         {
@@ -28,6 +31,7 @@ namespace Capstone.LMS.Application.Queries.Dashboard
             borrowedBookQuery = borrowedBookQuery
                             .Include(p => p.Book).ThenInclude(p => p.Genre)
                             .Include(p => p.Book).ThenInclude(p => p.Author)
+                            .Include(p => p.User)
                             .Include(p => p.Approver);
 
 
@@ -35,23 +39,80 @@ namespace Capstone.LMS.Application.Queries.Dashboard
             {
                 case Roles.Administrator:
                     {
+                        var borrowedOrOverdueBooks = await borrowedBookQuery
+                            .Where(p => p.Status == BorrowedStatus.Borrowed || p.Status == BorrowedStatus.Overdue)
+                            .AsNoTracking()
+                            .ToListAsync(cancellationToken);
 
+                        var borrowedBooks = borrowedOrOverdueBooks
+                            .Where(p => p.Status == BorrowedStatus.Borrowed)
+                            .ToList();
+
+                        var librarians = await _userManager.GetUsersInRoleAsync(Roles.Librarian);
+                        var borrowers = await _userManager.GetUsersInRoleAsync(Roles.Borrower);
+
+                        dashboard.Cards =
+                        [
+                            new("Total Librarians", librarians.Count),
+                            new("Total Borrowers", borrowers.Count),
+                            new("Borrowed Books", borrowedBooks.Count)
+                        ];
+
+                        dashboard.List =
+                        [
+                            CreateTopBorrowersList(borrowedOrOverdueBooks),
+                            CreateTopBooksList(borrowedOrOverdueBooks)
+                        ];
                     }
                     break;
                 case Roles.Librarian:
                     {
-                        var borrowedBooks = await borrowedBookQuery
-                            .Where(p => p.Status == Domain.Enums.BorrowedStatus.Borrowed)
+                        var borrowedOrOverdueBooks = await borrowedBookQuery
+                            .Where(p => p.UserId == request.UserId && (p.Status == BorrowedStatus.Borrowed || p.Status == BorrowedStatus.Overdue))
                             .AsNoTracking()
                             .ToListAsync(cancellationToken);
 
-                        var dueBooks = await borrowedBookQuery
-                            .Where(p => p.Status == Domain.Enums.BorrowedStatus.Overdue)
+                        dashboard.Tables =
+                        [
+                            CreateDashboardBorrowedBooksTable(borrowedOrOverdueBooks.Where(b => b.Status == BorrowedStatus.Borrowed)),
+                            CreateDashboardOverdueBooksTable(borrowedOrOverdueBooks.Where(b => b.Status == BorrowedStatus.Overdue))
+                        ];
+
+                        dashboard.List =
+                        [
+                            CreateTopBorrowersList(borrowedOrOverdueBooks),
+                            CreateTopBooksList(borrowedOrOverdueBooks)
+                        ];
+                    }
+                    break;
+                case Roles.Borrower:
+                    {
+                        var borrowedOrOverdueBooks = await borrowedBookQuery
+                            .Where(p => p.UserId == request.UserId && (p.Status == BorrowedStatus.Borrowed || p.Status == BorrowedStatus.Overdue))
                             .AsNoTracking()
                             .ToListAsync(cancellationToken);
 
-                        var topBorrowers = await borrowedBookQuery
-                            .GroupBy(p => new { p.UserId, p.User.FirstName, p.User.LastName })
+                        dashboard.Tables =
+                        [
+                            CreateDashboardBorrowedBooksTable(borrowedOrOverdueBooks.Where(b => b.Status == BorrowedStatus.Borrowed)),
+                            CreateDashboardOverdueBooksTable(borrowedOrOverdueBooks.Where(b => b.Status == BorrowedStatus.Overdue))
+                        ];
+                    }
+                    break;
+            }
+
+            return dashboard;
+        }
+
+        private static DashboardListDto CreateTopBorrowersList(IEnumerable<BorrowedBook> borrowedOrOverdueBooks)
+        {
+            var topBorrowers = borrowedOrOverdueBooks
+                            .GroupBy(p => new
+                            {
+                                p.UserId,
+                                p.User.FirstName,
+                                p.User.LastName
+                            })
                             .Select(p => new
                             {
                                 User = p.Key,
@@ -59,11 +120,20 @@ namespace Capstone.LMS.Application.Queries.Dashboard
                             })
                             .OrderByDescending(p => p.Total)
                             .Take(5)
-                            .AsNoTracking()
-                            .ToListAsync(cancellationToken);
+                            .ToList();
 
-                        var topBooks = borrowedBooks
-                            .GroupBy(p => new { p.BookId, p.Book.Title, p.Book.Summary })
+            return new("Top 5 Borrowers", topBorrowers.Select(b => $"{b.User.FirstName} {b.User.LastName}"));
+        }
+
+        private static DashboardListDto CreateTopBooksList(IEnumerable<BorrowedBook> borrowedOrOverdueBooks)
+        {
+            var topBooks = borrowedOrOverdueBooks
+                            .GroupBy(p => new
+                            {
+                                p.BookId,
+                                p.Book.Title,
+                                p.Book.Summary
+                            })
                             .Select(p => new
                             {
                                 Book = p.Key,
@@ -73,51 +143,19 @@ namespace Capstone.LMS.Application.Queries.Dashboard
                             .Take(5)
                             .ToList();
 
-                        dashboard.Tables =
-                        [
-                            .. CreateDashboardTables(borrowedBooks, dueBooks),
-                            new(
-                            "Top 5 Borrowers",
-                            new List<string>{ "Borrower" },
-                            topBorrowers.Select(b => b.User.FirstName + " " + b.User.LastName)),
-
-                            new(
-                            "Top 5 Books",
-                            new List<string>{ "Book" },
-                            topBooks.Select(b => b.Book.Title))
-                        ];
-                    }
-                    break;
-                case Roles.Borrower:
-                    {
-                        var borrowedBooks = await borrowedBookQuery
-                            .Where(p => p.UserId == request.UserId && p.Status == Domain.Enums.BorrowedStatus.Borrowed)
-                            .AsNoTracking()
-                            .ToListAsync(cancellationToken);
-
-                        var dueBooks = await borrowedBookQuery
-                            .Where(p => p.UserId == request.UserId && p.Status == Domain.Enums.BorrowedStatus.Overdue)
-                            .AsNoTracking()
-                            .ToListAsync(cancellationToken);
-
-                        dashboard.Tables = CreateDashboardTables(borrowedBooks, dueBooks);
-                    }
-                    break;
-            }
-
-            return dashboard;
+            return new("Top 5 Books", topBooks.Select(b => b.Book.Title));
         }
 
-        private IEnumerable<DashboardTableDto> CreateDashboardTables(List<BorrowedBook> borrowedBooks, List<BorrowedBook> overdueBooks)
+        private static DashboardTableDto CreateDashboardBorrowedBooksTable(IEnumerable<BorrowedBook> borrowedBooks)
         {
-            yield return new(
+            return new(
                     "Books Borrowed",
                     new List<string>
                     {
-                                    nameof(DashboardBorrowedBookItemDto.Title),
-                                    nameof(DashboardBorrowedBookItemDto.Summary),
-                                    nameof(DashboardBorrowedBookItemDto.Issued),
-                                    nameof(DashboardBorrowedBookItemDto.Due)
+                        nameof(DashboardBorrowedBookItemDto.Title),
+                        nameof(DashboardBorrowedBookItemDto.Summary),
+                        nameof(DashboardBorrowedBookItemDto.Issued),
+                        nameof(DashboardBorrowedBookItemDto.Due)
                     },
                     borrowedBooks
                     .Select(b => new DashboardBorrowedBookItemDto
@@ -127,16 +165,19 @@ namespace Capstone.LMS.Application.Queries.Dashboard
                         Issued = b.BorrowedOnUtc,
                         Due = b.DueOnUtc
                     }));
+        }
 
-            yield return new(
-                    "Books Overdue",
+        private static DashboardTableDto CreateDashboardOverdueBooksTable(IEnumerable<BorrowedBook> overdueBooks)
+        {
+            return new(
+                    "Overdue Books",
                     new List<string>
                     {
-                                    nameof(DashboardOverdueBookItemDto.Title),
-                                    nameof(DashboardOverdueBookItemDto.Summary),
-                                    nameof(DashboardOverdueBookItemDto.Issued),
-                                    nameof(DashboardOverdueBookItemDto.Due),
-                                    nameof(DashboardOverdueBookItemDto.ElapsedInDays),
+                        nameof(DashboardOverdueBookItemDto.Title),
+                        nameof(DashboardOverdueBookItemDto.Summary),
+                        nameof(DashboardOverdueBookItemDto.Issued),
+                        nameof(DashboardOverdueBookItemDto.Due),
+                        nameof(DashboardOverdueBookItemDto.ElapsedInDays),
                     },
                     overdueBooks
                     .Select(b => new DashboardOverdueBookItemDto
@@ -149,38 +190,5 @@ namespace Capstone.LMS.Application.Queries.Dashboard
                     }));
         }
 
-        private static GetBookBorrowedResponseDto SetBookBorrowedModel(BorrowedBook bookBorrowed)
-        {
-            return new GetBookBorrowedResponseDto
-            {
-                BookBorrowedId = bookBorrowed.Id,
-                Status = bookBorrowed.Status,
-                ApproverName = bookBorrowed.Approver == null ? "" : bookBorrowed.Approver.FirstName + " " + bookBorrowed.Approver.LastName,
-                ApprovedOnUtc = bookBorrowed.ApprovedOnUtc,
-                BorrowedOnUtc = bookBorrowed.BorrowedOnUtc,
-                DueOnUtc = bookBorrowed.DueOnUtc,
-                ReturnedOnUtc = bookBorrowed.ReturnedOnUtc,
-                Book = new GetBookItemResponseDto
-                {
-                    BookId = bookBorrowed.Book.Id,
-                    Title = bookBorrowed.Book.Title,
-                    Summary = bookBorrowed.Book.Summary,
-                    Isbn = bookBorrowed.Book.Isbn,
-                    PublishedOn = bookBorrowed.Book.PublishedOn,
-                    TotalCopies = bookBorrowed.Book.TotalCopies,
-                    Availability = bookBorrowed.Book.Availability,
-                    Genre = bookBorrowed.Book.Genre == null ? null : new Dtos.Genre.GetGenreResponseDto
-                    {
-                        GenreId = bookBorrowed.Book.Genre.Id,
-                        Name = bookBorrowed.Book.Genre.Name
-                    },
-                    Author = bookBorrowed.Book.Author == null ? null : new Dtos.Author.GetAuthorResponseDto
-                    {
-                        AuthorId = bookBorrowed.Book.Author.Id,
-                        Name = bookBorrowed.Book.Author.Name
-                    }
-                }
-            };
-        }
     }
 }
