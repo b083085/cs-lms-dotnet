@@ -1,5 +1,4 @@
-﻿
-using Capstone.LMS.Application.Authentication;
+﻿using Capstone.LMS.Application.Authentication;
 using Capstone.LMS.Application.Dtos.Auth;
 using Capstone.LMS.Application.Persistence;
 using Capstone.LMS.Domain.Entities;
@@ -9,6 +8,7 @@ using Capstone.LMS.Domain.Shared;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -41,6 +41,8 @@ namespace Capstone.LMS.Application.Commands.Auth
                 return Result.Failure<LoginResponseDto>(DomainErrors.User.NotFound);
             }
 
+            var roles = await _userManager.GetRolesAsync(user);
+
             var validPassword = await _userManager.CheckPasswordAsync(user, request.Password);
             if (!validPassword)
             {
@@ -62,7 +64,17 @@ namespace Capstone.LMS.Application.Commands.Auth
             var result = Result.Success(new LoginResponseDto
             {
                 AccessToken = accessToken,
-                RefreshToken = refreshToken.Token
+                RefreshToken = refreshToken.Token,
+                User = new Dtos.User.GetUserResponseDto
+                {
+                    UserId = user.Id,
+                    UserName = user.UserName,
+                    Email = user.Email,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Gender = user.Gender.Value,
+                    Role = roles.FirstOrDefault()
+                }
             });
 
             return result;

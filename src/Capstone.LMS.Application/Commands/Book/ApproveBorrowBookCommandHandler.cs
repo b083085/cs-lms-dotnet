@@ -35,6 +35,11 @@ namespace Capstone.LMS.Application.Commands.Book
 
             if (request.Approve)
             {
+                if (!bookBorrowed.Book.IsAvailable())
+                {
+                    return Result.Failure(DomainErrors.Book.IsUnavailable);
+                }
+
                 bookBorrowed.Approve(approverId);
             }
             else

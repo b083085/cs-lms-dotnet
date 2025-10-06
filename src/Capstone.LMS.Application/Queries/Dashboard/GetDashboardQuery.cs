@@ -4,7 +4,9 @@ using System;
 
 namespace Capstone.LMS.Application.Queries.Dashboard
 {
-    public record GetDashboardQuery(
-        Guid? UserId, 
-        string Role) : IRequest<GetDashboardResponseDto>;
+    public record GetDashboardQuery() : IRequest<GetDashboardResponseDto>
+    {
+        public Guid? UserId { get; init; }
+        public string Role { get; init; }
+    }
 }

@@ -13,7 +13,7 @@ namespace Capstone.LMS.Presentation.Endpoints
             var group = CreateMapGroup(app, "dashboard")
                 .WithTags("Dashboard");
 
-            group.MapGet("{role}", GetDashboardAsync)
+            group.MapGet("", GetDashboardAsync)
                  .WithSummary("Gets the dashboard by role.");
         }
 

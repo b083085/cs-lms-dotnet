@@ -57,11 +57,11 @@ namespace Capstone.LMS.Infrastructure
             services.AddCors(options =>
             options.AddPolicy(Cors.CorsPolicy.AllowOrigin,
                                 policy => policy
-                                .WithOrigins(corsOptions.Origins?.ToArray())
-                                //.AllowAnyOrigin()
+                                //.WithOrigins(corsOptions.Origins?.ToArray())
+                                .AllowAnyOrigin()
                                 .AllowAnyHeader()
                                 .AllowAnyMethod()
-                                .AllowCredentials()
+                                //.AllowCredentials()
                                 ));
         }
 
